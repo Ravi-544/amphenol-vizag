@@ -1,0 +1,18 @@
+{
+  "name": "amphenol-attendance-portal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Amphenol Exa Thermometrics geofenced attendance portal - web app and Android app (via Capacitor)",
+  "scripts": {
+    "android:sync": "cap sync android",
+    "android:open": "cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.4",
+    "@capacitor/core": "^7.4.4",
+    "@capacitor/geolocation": "^7.1.6"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.4"
+  }
+}

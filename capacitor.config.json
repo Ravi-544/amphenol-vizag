@@ -1,0 +1,11 @@
+{
+  "appId": "com.amphenol.exathermometrics.attendance",
+  "appName": "Amphenol Attendance",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}

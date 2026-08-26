@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amphenol - Exa Thermometrics | Geofenced Attendance Portal</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-gray-800 font-sans h-screen flex overflow-hidden">
+
+    <!-- ================= LOGIN SCREEN ================= -->
+    <div id="loginScreen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 border border-slate-800">
+            <div class="mb-6 text-center">
+                <h1 class="text-2xl font-black tracking-wide text-slate-900">Amphenol</h1>
+                <p class="text-xs text-blue-600 font-bold tracking-wider uppercase mt-1">Exa Thermometrics Operations Portal</p>
+            </div>
+
+            <!-- Login Form -->
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">User ID</label>
+                    <input type="text" id="loginId" placeholder="Enter your ID (e.g. manager)" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Password</label>
+                    <input type="password" id="loginPass" placeholder="••••••••" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div id="loginError" class="text-xs text-red-500 font-medium hidden text-center">Invalid User ID or Password.</div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition">Secure Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= MAIN APP WORKSPACE ================= -->
+    <aside id="sidebarNav" class="w-64 bg-slate-900 text-white flex flex-col shadow-xl z-10 transition-all duration-300 hidden">
+        <div class="p-5 border-b border-slate-800">
+            <h1 class="text-base font-bold tracking-wide text-white">Amphenol</h1>
+            <p class="text-[10px] text-blue-400 font-medium tracking-wider uppercase">Exa Thermometrics</p>
+        </div>
+        
+        <nav class="flex-grow p-4 space-y-1">
+            <button onclick="switchTab('home')" id="nav-home" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium bg-blue-600 text-white transition">
+                🏠 Home Dashboard
+            </button>
+            <button onclick="switchTab('manager')" id="nav-manager" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                👔 Task Management Board
+            </button>
+            <button onclick="switchTab('attendance')" id="nav-attendance" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                📍 Location Attendance
+            </button>
+            <button onclick="switchTab('createuser')" id="nav-createuser" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                🔑 Create ID & Pass
+            </button>
+            <button onclick="switchTab('employee')" id="nav-employee" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                👷 Shift Tasks
+            </button>
+            <button onclick="switchTab('calendar')" id="nav-calendar" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                📅 Monthly Calendar
+            </button>
+        </nav>
+
+        <div class="p-4 border-t border-slate-800">
+            <button onclick="logout()" class="w-full text-xs bg-slate-800 hover:bg-red-600/20 hover:text-red-400 text-slate-300 py-2 rounded-lg transition font-medium">
+                🔒 Logout
+            </button>
+        </div>
+    </aside>
+
+    <main id="mainWorkspace" class="flex-grow flex flex-col h-screen overflow-y-auto relative bg-gray-100 hidden">
+        <header class="bg-white border-b px-8 py-4 flex justify-between items-center shadow-sm">
+            <h2 id="pageTitle" class="text-xl font-bold text-slate-900">Home Dashboard</h2>
+            <div class="flex items-center gap-3">
+                <span id="roleIndicator" class="text-xs bg-blue-50 text-blue-700 font-semibold px-2.5 py-1 rounded-md">Role: Manager</span>
+                <div class="text-xs font-semibold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-lg">
+                    Status: <span class="text-emerald-600 font-bold">Online</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-8 max-w-7xl mx-auto w-full flex-grow">
+            <!-- VIEW 1: HOME -->
+            <section id="view-home" class="space-y-6">
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+                    <div class="max-w-xl">
+                        <span class="text-xs font-bold text-blue-600 uppercase tracking-wider bg-blue-50 px-2.5 py-1 rounded-md">Operations Portal</span>
+                        <h3 class="text-2xl font-extrabold text-slate-900 mt-3">Welcome to Amphenol - Exa Thermometrics</h3>
+                        <p class="text-sm text-gray-600 mt-2 leading-relaxed">Use the sidebar menu to navigate through task boards, strict 500m geofenced attendance tracking, and schedules.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 2: MANAGER / SUPERVISOR PORTAL -->
+            <section id="view-manager" class="hidden space-y-8">
+                <!-- Location Configuration Card -->
+                <div id="locationConfigCard" class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h3 class="text-base font-bold text-slate-900 mb-2">Default Geofence Location Setup</h3>
+                    <p class="text-xs text-gray-500 mb-4">Clicking this button captures your real-time GPS coordinates as the official 500m radius attendance center.</p>
+                    <div class="flex flex-col sm:flex-row gap-3 items-center">
+                        <input type="text" id="defaultLocationInput" placeholder="e.g., Amphenol Plant Unit 1" class="flex-grow px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                        <button onclick="captureManagerLocation()" class="bg-slate-900 hover:bg-slate-800 text-white font-medium px-5 py-2.5 rounded-lg text-sm transition whitespace-nowrap">📍 Capture My GPS & Update</button>
+                    </div>
+                    <div id="managerLocStatus" class="text-xs font-semibold text-gray-500 mt-2">Current Coordinates: Not Set</div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                        <div class="text-xs font-semibold uppercase text-gray-400">Total Tasks Assigned</div>
+                        <div id="statTotal" class="text-3xl font-bold text-slate-900 mt-2">0</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                        <div class="text-xs font-semibold uppercase text-amber-500">Pending Tasks</div>
+                        <div id="statPending" class="text-3xl font-bold text-amber-600 mt-2">0</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                        <div class="text-xs font-semibold uppercase text-blue-500">In Progress</div>
+                        <div id="statProgress" class="text-3xl font-bold text-blue-600 mt-2">0</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                        <div class="text-xs font-semibold uppercase text-emerald-500">Completed</div>
+                        <div id="statCompleted" class="text-3xl font-bold text-emerald-600 mt-2">0</div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h3 class="text-base font-bold text-slate-900 mb-6">Work Completion & Status Graph</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1">
+                                <span>Completed Work</span>
+                                <span id="barCompletedVal">0 tasks</span>
+                            </div>
+                            <div class="w-full bg-gray-100 h-4 rounded-full overflow-hidden">
+                                <div id="barCompleted" class="bg-emerald-500 h-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1">
+                                <span>In Progress Work</span>
+                                <span id="barProgressVal">0 tasks</span>
+                            </div>
+                            <div class="w-full bg-gray-100 h-4 rounded-full overflow-hidden">
+                                <div id="barProgress" class="bg-blue-500 h-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1">
+                                <span>Pending Work</span>
+                                <span id="barPendingVal">0 tasks</span>
+                            </div>
+                            <div class="w-full bg-gray-100 h-4 rounded-full overflow-hidden">
+                                <div id="barPending" class="bg-amber-500 h-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-1 h-fit">
+                        <h3 class="text-lg font-bold text-slate-900 mb-4 border-b pb-2">Assign New Task</h3>
+                        <form id="taskForm" onsubmit="addTask(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Task Title / Objective</label>
+                                <input type="text" id="taskTitle" placeholder="e.g., Sensor Calibration" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Assign to Employee ID</label>
+                                <select id="employeeIdSelect" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                                    <option value="" disabled selected>Select registered employee ID...</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Shift</label>
+                                    <select id="taskShift" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                        <option value="Morning">Morning</option>
+                                        <option value="Afternoon">Afternoon</option>
+                                        <option value="Night">Night</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Priority</label>
+                                    <select id="taskPriority" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                        <option value="Low">Low</option>
+                                        <option value="Medium" selected>Medium</option>
+                                        <option value="High">High</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Assigned Date</label>
+                                <input type="date" id="taskDate" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Instructions <span class="text-gray-400 font-normal lowercase">(optional)</span></label>
+                                <textarea id="taskDesc" rows="2" placeholder="Optional notes..." class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg text-sm transition">Assign Task</button>
+                        </form>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2 flex flex-col">
+                        <div class="flex justify-between items-center mb-4 border-b pb-2">
+                            <h3 class="text-lg font-bold text-slate-900">Master Task Board</h3>
+                            <button onclick="clearTasks()" class="text-xs text-red-600 hover:underline">Clear All</button>
+                        </div>
+                        <div class="overflow-x-auto flex-grow">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
+                                        <th class="p-3 border-b">Task & Assigned ID</th>
+                                        <th class="p-3 border-b">Shift, Priority & Date</th>
+                                        <th class="p-3 border-b">Status</th>
+                                        <th class="p-3 border-b text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="managerTableBody" class="text-sm divide-y divide-gray-100">
+                                    <tr><td colspan="4" class="p-4 text-center text-gray-400 italic">No tasks assigned yet.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 2.5: LOCATION ATTENDANCE PORTAL -->
+            <section id="view-attendance" class="hidden space-y-6">
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-200 max-w-2xl mx-auto text-center space-y-4">
+                    <h3 class="text-xl font-bold text-slate-900">500m Geofenced Attendance Portal</h3>
+                    <p class="text-sm text-gray-600">Active Official Plant Name:</p>
+                    <div id="displayDefaultLocation" class="text-base font-bold text-blue-600 bg-blue-50 p-3 rounded-lg border border-blue-200 inline-block">
+                        Loading location...
+                    </div>
+                    <div class="pt-4">
+                        <button onclick="markAttendance()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3 rounded-xl shadow-md transition text-sm">
+                            📍 Mark Attendance (Verify 500m Radius)
+                        </button>
+                    </div>
+                    <div id="attendanceMsg" class="text-xs font-semibold mt-2"></div>
+                </div>
+
+                <!-- Attendance Records Table -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <div class="flex justify-between items-center mb-4 border-b pb-2">
+                        <h4 class="text-base font-bold text-slate-900">Verified Attendance Punch Logs</h4>
+                        <button onclick="clearAttendance()" class="text-xs text-red-600 hover:underline">Clear Logs</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
+                                    <th class="p-3 border-b">Employee ID</th>
+                                    <th class="p-3 border-b">Date & Time</th>
+                                    <th class="p-3 border-b">Plant Location</th>
+                                    <th class="p-3 border-b">Distance from Center</th>
+                                    <th class="p-3 border-b">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendanceTableBody" class="text-sm divide-y divide-gray-100">
+                                <tr><td colspan="5" class="p-4 text-center text-gray-400 italic">No attendance records found.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 3: CREATE USER PORTAL (Manager Only) -->
+            <section id="view-createuser" class="hidden max-w-xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+                <h3 class="text-lg font-bold text-slate-900 mb-4 border-b pb-2">Create New Account Credentials</h3>
+                <form onsubmit="createNewUser(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Select Role Type</label>
+                        <select id="newUserRole" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option value="supervisor">Supervisor (Can Manage & Edit Tasks)</option>
+                            <option value="employee">Employee (Can View Assigned Tasks)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Employee / Account Name</label>
+                        <input type="text" id="newUserName" placeholder="e.g., Ravi Teja" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Login ID Section</label>
+                        <input type="text" id="newUserId" placeholder="e.g., ravi_t01" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Password</label>
+                        <input type="text" id="newUserPass" placeholder="e.g., SecurePass@123" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div id="createSuccess" class="text-xs text-emerald-600 font-semibold hidden">Account credentials generated successfully!</div>
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-lg text-sm transition">Create Account</button>
+                </form>
+            </section>
+
+            <!-- VIEW 4: EMPLOYEE PORTAL -->
+            <section id="view-employee" class="hidden space-y-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <div class="mb-4 pb-2 border-b">
+                        <h3 class="text-lg font-bold text-slate-900">Your Assigned Shift Tasks</h3>
+                        <p class="text-xs text-gray-500" id="employeeSubtitle">Review your tasks and update their progression state.</p>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
+                                    <th class="p-3 border-b">Task Objective</th>
+                                    <th class="p-3 border-b">Shift & Date</th>
+                                    <th class="p-3 border-b">Instructions</th>
+                                    <th class="p-3 border-b">Current Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employeeTableBody" class="text-sm divide-y divide-gray-100">
+                                <tr><td colspan="4" class="p-4 text-center text-gray-400 italic">No tasks currently assigned to you.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 5: MONTHLY CALENDAR -->
+            <section id="view-calendar" class="hidden bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col h-[75vh]">
+                <div class="flex justify-between items-center mb-4 border-b pb-2">
+                    <h3 id="calendarMonthTitle" class="text-lg font-bold text-slate-900">Month Year</h3>
+                    <div class="space-x-1">
+                        <button onclick="changeMonth(-1)" class="px-2.5 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-bold">&larr; Prev</button>
+                        <button onclick="changeMonth(1)" class="px-2.5 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-bold">Next &rarr;</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-7 text-center text-xs font-semibold text-gray-500 mb-2">
+                    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                </div>
+                <div id="calendarGrid" class="grid grid-cols-7 gap-1 flex-grow"></div>
+            </section>
+        </div>
+    </main>
+
+    <!-- DAY TASK MODAL -->
+    <div id="dayModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-xl max-w-lg w-full p-6 flex flex-col max-h-[80vh]">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 id="modalDateTitle" class="text-base font-bold text-slate-900">Tasks for Date</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">&times;</button>
+            </div>
+            <div id="modalTaskList" class="space-y-3 overflow-y-auto flex-grow pr-1"></div>
+            <div class="mt-4 pt-3 border-t text-right">
+                <button onclick="closeModal()" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-medium hover:bg-slate-800 transition">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripting Logic -->
+    <script>
+        document.getElementById('taskDate').valueAsDate = new Date();
+
+        let customUsers = JSON.parse(localStorage.getItem('customTieredUsersGeo500')) || {};
+        let tasks = JSON.parse(localStorage.getItem('assignedTasksGeo500')) || [];
+        let attendanceLogs = JSON.parse(localStorage.getItem('attendanceLogsGeo500')) || [];
+        
+        let plantName = localStorage.getItem('plantNameGeo500') || 'Amphenol Plant Unit 1';
+        let plantLat = parseFloat(localStorage.getItem('plantLatGeo500')) || null;
+        let plantLon = parseFloat(localStorage.getItem('plantLonGeo500')) || null;
+        
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        let currentRole = 'manager';
+        let loggedInUserId = '';
+
+        document.getElementById('defaultLocationInput').value = plantName;
+        updateManagerLocLabel();
+
+        function updateManagerLocLabel() {
+            const statusEl = document.getElementById('managerLocStatus');
+            const displayEl = document.getElementById('displayDefaultLocation');
+            if(plantLat !== null && plantLon !== null) {
+                statusEl.innerText = `Active Anchor Coordinates: ${plantLat.toFixed(5)}, ${plantLon.toFixed(5)}`;
+                displayEl.innerText = `${plantName} (${plantLat.toFixed(4)}, ${plantLon.toFixed(4)})`;
+            } else {
+                statusEl.innerText = "Active Anchor Coordinates: Not configured yet. Please capture GPS.";
+                displayEl.innerText = `${plantName} (Coordinates Not Set)`;
+            }
+        }
+
+        function captureManagerLocation() {
+            const locName = document.getElementById('defaultLocationInput').value.trim();
+            if(!locName) { alert("Please enter a plant name."); return; }
+
+            if (!navigator.geolocation) {
+                alert("Geolocation is not supported by your browser.");
+                return;
+            }
+
+            const statusEl = document.getElementById('managerLocStatus');
+            statusEl.innerText = "Capturing your real-time GPS coordinates...";
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    plantLat = position.coords.latitude;
+                    plantLon = position.coords.longitude;
+                    plantName = locName;
+
+                    localStorage.setItem('plantNameGeo500', plantName);
+                    localStorage.setItem('plantLatGeo500', plantLat);
+                    localStorage.setItem('plantLonGeo500', plantLon);
+
+                    updateManagerLocLabel();
+                    alert("Plant default location and manager GPS coordinates updated successfully!");
+                },
+                (error) => {
+                    alert("GPS Error: Please enable location access in your browser settings.");
+                    statusEl.innerText = "GPS Capture Failed.";
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        }
+
+        // Haversine formula to calculate distance in meters between two lat/lon points
+        function calculateDistanceMeters(lat1, lon1, lat2, lon2) {
+            const R = 6371000; // Radius of Earth in meters
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c; // Distance in meters
+        }
+
+        function markAttendance() {
+            const msg = document.getElementById('attendanceMsg');
+
+            if (plantLat === null || plantLon === null) {
+                msg.innerText = "Error: Manager has not configured the default plant location coordinates yet.";
+                msg.className = "text-xs font-semibold text-red-600 mt-2";
+                return;
+            }
+
+            msg.innerText = "Verifying your real-time location against 500m geofence...";
+            msg.className = "text-xs font-semibold text-blue-600 mt-2";
+
+            if (!navigator.geolocation) {
+                msg.innerText = "Geolocation is not supported by your browser.";
+                msg.className = "text-xs font-semibold text-red-600 mt-2";
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const userLat = position.coords.latitude;
+                    const userLon = position.coords.longitude;
+                    const distanceMeters = calculateDistanceMeters(plantLat, plantLon, userLat, userLon);
+
+                    if (distanceMeters <= 500) {
+                        // Within 500 meters
+                        const now = new Date().toLocaleString();
+                        const newLog = {
+                            id: Date.now(),
+                            userId: loggedInUserId,
+                            time: now,
+                            locationName: plantName,
+                            distance: `${Math.round(distanceMeters)}m`,
+                            status: 'Present (Verified)'
+                        };
+
+                        attendanceLogs.unshift(newLog);
+                        localStorage.setItem('attendanceLogsGeo500', JSON.stringify(attendanceLogs));
+                        renderAttendanceTable();
+
+                        msg.innerText = `Attendance marked successfully! (${Math.round(distanceMeters)}m from plant center).`;
+                        msg.className = "text-xs font-semibold text-emerald-600 mt-2";
+                    } else {
+                        // Outside 500 meters
+                        msg.innerText = `Attendance failed: You are ${Math.round(distanceMeters)}m away from the plant. Go nearby and try again.`;
+                        msg.className = "text-xs font-semibold text-red-600 mt-2";
+                    }
+                },
+                (error) => {
+                    msg.innerText = "GPS Error: Please allow location access to check your proximity.";
+                    msg.className = "text-xs font-semibold text-red-600 mt-2";
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        }
+
+        function renderAttendanceTable() {
+            const tbody = document.getElementById('attendanceTableBody');
+            if (attendanceLogs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400 italic">No attendance records found.</td></tr>`;
+                return;
+            }
+
+            let displayLogs = attendanceLogs;
+            if (currentRole === 'employee') {
+                displayLogs = attendanceLogs.filter(l => l.userId.toLowerCase() === loggedInUserId.toLowerCase());
+            }
+
+            if(displayLogs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400 italic">No attendance records found for your account.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = displayLogs.map(log => `
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="p-3 font-mono font-bold text-slate-900">@${log.userId}</td>
+                    <td class="p-3 text-xs text-gray-600">${log.time}</td>
+                    <td class="p-3 text-xs text-blue-600 font-medium">${log.locationName}</td>
+                    <td class="p-3 text-xs font-mono text-slate-700">${log.distance}</td>
+                    <td class="p-3"><span class="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full">${log.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function clearAttendance() {
+            if (confirm('Are you sure you want to clear all attendance logs?')) {
+                attendanceLogs = [];
+                localStorage.removeItem('attendanceLogsGeo500');
+                renderAttendanceTable();
+            }
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const idInput = document.getElementById('loginId').value.trim();
+            const passInput = document.getElementById('loginPass').value.trim();
+            const errorMsg = document.getElementById('loginError');
+
+            if (idInput === "manager" && passInput === "Manager@123") {
+                currentRole = 'manager';
+                loggedInUserId = idInput;
+                grantAccess();
+            } else if (customUsers[idInput] && customUsers[idInput].pass === passInput) {
+                currentRole = customUsers[idInput].role;
+                loggedInUserId = idInput;
+                grantAccess();
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        function grantAccess() {
+            document.getElementById('loginError').classList.add('hidden');
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('sidebarNav').classList.remove('hidden');
+            document.getElementById('mainWorkspace').classList.remove('hidden');
+
+            const roleBadge = document.getElementById('roleIndicator');
+            const navManager = document.getElementById('nav-manager');
+            const navCreateUser = document.getElementById('nav-createuser');
+            const navEmployee = document.getElementById('nav-employee');
+            const locConfigCard = document.getElementById('locationConfigCard');
+
+            if (currentRole === 'manager') {
+                roleBadge.innerText = "Role: Manager";
+                roleBadge.className = "text-xs bg-blue-50 text-blue-700 font-semibold px-2.5 py-1 rounded-md";
+                navManager.style.display = "flex";
+                navCreateUser.style.display = "flex";
+                navEmployee.style.display = "flex";
+                locConfigCard.style.display = "block";
+                switchTab('manager');
+            } else if (currentRole === 'supervisor') {
+                roleBadge.innerText = "Role: Supervisor";
+                roleBadge.className = "text-xs bg-purple-50 text-purple-700 font-semibold px-2.5 py-1 rounded-md";
+                navManager.style.display = "flex";
+                navCreateUser.style.display = "none";
+                navEmployee.style.display = "flex";
+                locConfigCard.style.display = "none";
+                switchTab('manager');
+            } else {
+                let nameLabel = customUsers[loggedInUserId] ? customUsers[loggedInUserId].name : loggedInUserId;
+                roleBadge.innerText = `Role: Employee (${nameLabel})`;
+                roleBadge.className = "text-xs bg-emerald-50 text-emerald-700 font-semibold px-2.5 py-1 rounded-md";
+                navManager.style.display = "none";
+                navCreateUser.style.display = "none";
+                navEmployee.style.display = "flex";
+                switchTab('attendance');
+            }
+
+            updateEmployeeDropdown();
+            updateMetrics();
+            renderManagerTasks();
+            renderEmployeeTasks();
+            renderAttendanceTable();
+            renderCalendar();
+        }
+
+        function updateEmployeeDropdown() {
+            const select = document.getElementById('employeeIdSelect');
+            const employeeIds = Object.keys(customUsers).filter(id => customUsers[id].role === 'employee');
+            
+            select.innerHTML = '';
+            if (employeeIds.length === 0) {
+                select.innerHTML = '<option value="" disabled selected>No employees found. Please create ID first.</option>';
+                return;
+            }
+
+            select.innerHTML = '<option value="" disabled selected>Select registered employee ID...</option>';
+            employeeIds.forEach(id => {
+                let userName = customUsers[id].name || id;
+                select.innerHTML += `<option value="${id}">${userName} (@${id})</option>`;
+            });
+        }
+
+        function createNewUser(event) {
+            event.preventDefault();
+            const nameInput = document.getElementById('newUserName').value.trim();
+            const newId = document.getElementById('newUserId').value.trim();
+            const newPass = document.getElementById('newUserPass').value.trim();
+            const newRole = document.getElementById('newUserRole').value;
+            const successMsg = document.getElementById('createSuccess');
+
+            customUsers[newId] = { name: nameInput, pass: newPass, role: newRole };
+            localStorage.setItem('customTieredUsersGeo500', JSON.stringify(customUsers));
+
+            successMsg.classList.remove('hidden');
+            setTimeout(() => successMsg.classList.add('hidden'), 3000);
+            document.getElementById('newUserName').value = '';
+            document.getElementById('newUserId').value = '';
+            document.getElementById('newUserPass').value = '';
+            updateEmployeeDropdown();
+        }
+
+        function logout() {
+            document.getElementById('loginId').value = "";
+            document.getElementById('loginPass').value = "";
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('sidebarNav').classList.add('hidden');
+            document.getElementById('mainWorkspace').classList.add('hidden');
+        }
+
+        function switchTab(tabId) {
+            const tabs = ['home', 'manager', 'attendance', 'createuser', 'employee', 'calendar'];
+            const titles = {
+                'home': 'Home Dashboard',
+                'manager': 'Task Management & Performance Matrix',
+                'attendance': '500m Geofenced Attendance Portal',
+                'createuser': 'Create ID & Password',
+                'employee': 'Employee Task Portal',
+                'calendar': 'Monthly Schedule Calendar'
+            };
+
+            tabs.forEach(t => {
+                const view = document.getElementById(`view-${t}`);
+                const nav = document.getElementById(`nav-${t}`);
+                if(view) view.classList.add('hidden');
+                if(nav) nav.className = "w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition";
+            });
+
+            const activeView = document.getElementById(`view-${tabId}`);
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if(activeView) activeView.classList.remove('hidden');
+            if(activeNav) activeNav.className = "w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium bg-blue-600 text-white transition";
+            document.getElementById('pageTitle').innerText = titles[tabId];
+
+            if(tabId === 'calendar') renderCalendar();
+            if(tabId === 'employee') renderEmployeeTasks();
+            if(tabId === 'attendance') renderAttendanceTable();
+            if(tabId === 'manager') {
+                updateEmployeeDropdown();
+                updateManagerLocLabel();
+            }
+        }
+
+        function addTask(event) {
+            event.preventDefault();
+            
+            const empId = document.getElementById('employeeIdSelect').value;
+            if (!empId) { alert("Please select an employee ID before assigning a task."); return; }
+
+            const empObj = customUsers[empId];
+            const empDisplayName = empObj ? `${empObj.name} (@${empId})` : empId;
+
+            const newTask = {
+                id: Date.now(),
+                title: document.getElementById('taskTitle').value,
+                employeeId: empId,
+                employeeName: empDisplayName,
+                shift: document.getElementById('taskShift').value,
+                priority: document.getElementById('taskPriority').value,
+                date: document.getElementById('taskDate').value,
+                desc: document.getElementById('taskDesc').value || 'No special instructions provided.',
+                status: 'Pending'
+            };
+
+            tasks.unshift(newTask);
+            localStorage.setItem('assignedTasksGeo500', JSON.stringify(tasks));
+            
+            updateMetrics();
+            renderManagerTasks();
+            renderEmployeeTasks();
+            renderCalendar();
+            document.getElementById('taskForm').reset();
+            document.getElementById('taskDate').valueAsDate = new Date();
+            updateEmployeeDropdown();
+
+            switchTab('manager');
+        }
+
+        function updateStatus(id, newStatus) {
+            tasks = tasks.map(t => t.id === id ? { ...t, status: newStatus } : t);
+            localStorage.setItem('assignedTasksGeo500', JSON.stringify(tasks));
+            updateMetrics();
+            renderManagerTasks();
+            renderEmployeeTasks();
+            renderCalendar();
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            localStorage.setItem('assignedTasksGeo500', JSON.stringify(tasks));
+            updateMetrics();
+            renderManagerTasks();
+            renderEmployeeTasks();
+            renderCalendar();
+        }
+
+        function updateMetrics() {
+            const total = tasks.length;
+            const pending = tasks.filter(t => t.status === 'Pending').length;
+            const progress = tasks.filter(t => t.status === 'In Progress').length;
+            const completed = tasks.filter(t => t.status === 'Completed').length;
+
+            document.getElementById('statTotal').innerText = total;
+            document.getElementById('statPending').innerText = pending;
+            document.getElementById('statProgress').innerText = progress;
+            document.getElementById('statCompleted').innerText = completed;
+
+            document.getElementById('barCompletedVal').innerText = `${completed} tasks`;
+            document.getElementById('barProgressVal').innerText = `${progress} tasks`;
+            document.getElementById('barPendingVal').innerText = `${pending} tasks`;
+
+            const compPercent = total > 0 ? (completed / total) * 100 : 0;
+            const progPercent = total > 0 ? (progress / total) * 100 : 0;
+            const pendPercent = total > 0 ? (pending / total) * 100 : 0;
+
+            document.getElementById('barCompleted').style.width = `${compPercent}%`;
+            document.getElementById('barProgress').style.width = `${progPercent}%`;
+            document.getElementById('barPending').style.width = `${pendPercent}%`;
+        }
+
+        function renderManagerTasks() {
+            const tbody = document.getElementById('managerTableBody');
+            if (tasks.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-400 italic">No tasks assigned yet.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = tasks.map(task => {
+                let statusBadge = task.status === 'Pending' ? 'bg-amber-100 text-amber-800' : task.status === 'In Progress' ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800';
+                let priorityBadge = task.priority === 'High' ? 'bg-red-50 text-red-600 border border-red-200' : task.priority === 'Medium' ? 'bg-orange-50 text-orange-600 border border-orange-200' : 'bg-slate-50 text-slate-600 border border-slate-200';
+
+                return `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="p-3">
+                            <div class="font-bold text-slate-900">${task.title}</div>
+                            <div class="text-xs text-blue-600 font-medium font-mono">Assigned To: ${task.employeeName}</div>
+                            <div class="text-xs text-gray-500 mt-0.5">${task.desc}</div>
+                        </td>
+                        <td class="p-3 space-y-1">
+                            <span class="text-[10px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded block w-max">${task.shift} Shift</span>
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded ${priorityBadge}">${task.priority} Priority</span>
+                            <div class="text-[11px] text-gray-500">Date: ${task.date}</div>
+                        </td>
+                        <td class="p-3">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${statusBadge}">${task.status}</span>
+                        </td>
+                        <td class="p-3 text-center space-y-1">
+                            <select onchange="updateStatus(${task.id}, this.value)" class="text-xs border rounded p-1 bg-white">
+                                <option value="Pending" ${task.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                                <option value="In Progress" ${task.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                                <option value="Completed" ${task.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                            </select>
+                            <br>
+                            <button onclick="deleteTask(${task.id})" class="text-[10px] text-red-500 hover:underline">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderEmployeeTasks() {
+            const tbody = document.getElementById('employeeTableBody');
+            const subtitle = document.getElementById('employeeSubtitle');
+
+            let filteredTasks = tasks;
+            if (currentRole === 'employee') {
+                subtitle.innerText = `Showing tasks assigned to ID: @${loggedInUserId}`;
+                filteredTasks = tasks.filter(t => t.employeeId.toLowerCase() === loggedInUserId.toLowerCase());
+            } else {
+                subtitle.innerText = "Review and update active team task statuses.";
+            }
+
+            if (filteredTasks.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-400 italic">No tasks currently assigned to you.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filteredTasks.map(task => {
+                let statusBadge = task.status === 'Pending' ? 'bg-amber-100 text-amber-800' : task.status === 'In Progress' ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800';
+
+                return `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="p-3">
+                            <div class="font-bold text-slate-900">${task.title}</div>
+                            <div class="text-xs text-blue-600 font-medium font-mono">Assigned To: ${task.employeeName}</div>
+                        </td>
+                        <td class="p-3">
+                            <span class="text-[10px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded block w-max mb-1">${task.shift} Shift</span>
+                            <div class="text-xs text-gray-500">${task.date}</div>
+                        </td>
+                        <td class="p-3 text-xs text-gray-600">${task.desc}</td>
+                        <td class="p-3">
+                            <select onchange="updateStatus(${task.id}, this.value)" class="text-xs border rounded p-1.5 bg-white font-semibold ${statusBadge}">
+                                <option value="Pending" ${task.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                                <option value="In Progress" ${task.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                                <option value="Completed" ${task.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function changeMonth(direction) {
+            currentMonth += direction;
+            if (currentMonth > 11) { currentMonth = 0; currentYear++; } 
+            else if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const title = document.getElementById('calendarMonthTitle');
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            
+            if(!title) return;
+            title.innerText = `${monthNames[currentMonth]} ${currentYear}`;
+            grid.innerHTML = '';
+
+            const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
+            const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+            for (let i = 0; i < firstDayIndex; i++) {
+                grid.innerHTML += `<div class="bg-gray-50 border rounded-lg min-h-[80px] opacity-40"></div>`;
+            }
+
+            for (let day = 1; day <= totalDays; day++) {
+                const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                let dayTasks = tasks.filter(t => t.date === dateString);
+                
+                if (currentRole === 'employee') {
+                    dayTasks = dayTasks.filter(t => t.employeeId.toLowerCase() === loggedInUserId.toLowerCase());
+                }
+
+                let tasksHTML = dayTasks.map(t => `
+                    <div class="text-[9px] bg-blue-50 text-blue-700 font-medium px-1.5 py-0.5 rounded truncate mb-0.5">
+                        ${t.title} (${t.employeeName})
+                    </div>
+                `).join('');
+
+                grid.innerHTML += `
+                    <div onclick="openDayModal('${dateString}')" class="bg-white border rounded-lg p-1.5 min-h-[90px] flex flex-col cursor-pointer hover:border-blue-500 hover:shadow-sm transition">
+                        <div class="text-xs font-bold text-slate-700 mb-1">${day}</div>
+                        <div class="flex-grow overflow-hidden space-y-0.5">${tasksHTML}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function openDayModal(dateStr) {
+            const modal = document.getElementById('dayModal');
+            const modalTitle = document.getElementById('modalDateTitle');
+            const modalList = document.getElementById('modalTaskList');
+
+            modalTitle.innerText = `Tasks Assigned for ${dateStr}`;
+            let dayTasks = tasks.filter(t => t.date === dateStr);
+
+            if (currentRole === 'employee') {
+                dayTasks = dayTasks.filter(t => t.employeeId.toLowerCase() === loggedInUserId.toLowerCase());
+            }
+
+            if (dayTasks.length === 0) {
+                modalList.innerHTML = `<p class="text-sm text-gray-400 italic text-center py-6">No tasks assigned for this date.</p>`;
+            } else {
+                modalList.innerHTML = dayTasks.map(t => {
+                    let statusBadge = t.status === 'Pending' ? 'bg-amber-100 text-amber-800' : t.status === 'In Progress' ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800';
+                    return `
+                        <div class="border rounded-lg p-3 bg-gray-50 space-y-1">
+                            <div class="flex justify-between items-start">
+                                <span class="font-bold text-slate-900 text-sm">${t.title}</span>
+                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full ${statusBadge}">${t.status}</span>
+                            </div>
+                            <div class="text-xs text-blue-600 font-medium">Assigned To: ${t.employeeName} (${t.shift} Shift)</div>
+                            <div class="text-xs text-gray-600">${t.desc}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('dayModal').classList.add('hidden');
+        }
+
+        function clearTasks() {
+            if (confirm('Are you sure you want to clear all tasks?')) {
+                tasks = [];
+                localStorage.removeItem('assignedTasksGeo500');
+                updateMetrics();
+                renderManagerTasks();
+                renderEmployeeTasks();
+                renderCalendar();
+            }
+        }
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js').catch(() => {});
+            });
+        }
+    </script>
+</body>
+</html>

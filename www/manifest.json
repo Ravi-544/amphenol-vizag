@@ -1,0 +1,13 @@
+{
+  "name": "Amphenol Attendance Portal",
+  "short_name": "Amphenol",
+  "description": "Exa Thermometrics geofenced attendance and task management portal",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
