@@ -3,66 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amphenol - Exa Thermometrics | Mobile Portal</title>
+    <title>SGX Sensortech - Operations Portal</title>
+    <!-- Favicon / App Icon Branding matching SGX logo -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 50'><text x='5' y='38' font-family='sans-serif' font-weight='900' font-size='36' fill='%2364748b'>SGX</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-900 text-gray-800 font-sans h-screen flex flex-col md:flex-row overflow-hidden">
 
     <!-- ================= LOGIN SCREEN ================= -->
     <div id="loginScreen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 border border-slate-800">
-            <div class="mb-6 text-center">
-                <h1 class="text-2xl font-black tracking-wide text-slate-900">Amphenol</h1>
-                <p class="text-xs text-blue-600 font-bold tracking-wider uppercase mt-1">Exa Thermometrics Operations Portal</p>
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 border border-slate-800 relative">
+            <div class="mb-6 text-center flex flex-col items-center">
+                <!-- SGX Sensortech Logo Recreation -->
+                <div class="flex items-center gap-1 mb-1">
+                    <span class="text-3xl font-black tracking-tight text-slate-600">SGX</span>
+                    <div class="relative w-10 h-8 flex items-center justify-center">
+                        <svg class="w-full h-full text-sky-400" viewBox="0 0 40 30" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+                            <path d="M 5 25 Q 15 5 35 10" />
+                        </svg>
+                        <div class="absolute top-0 right-0 flex gap-0.5">
+                            <span class="w-1 h-2 bg-sky-400 transform rotate-45"></span>
+                            <span class="w-1 h-3 bg-sky-400 transform rotate-45"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-xl font-black tracking-widest text-black uppercase">SENSORTECH</div>
+                <p class="text-[11px] text-sky-500 font-bold tracking-wider uppercase mt-0.5">An Amphenol Company</p>
             </div>
 
             <!-- Login Form -->
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">User ID</label>
-                    <input type="text" id="loginId" placeholder="Enter your ID (e.g. manager)" required class="w-full px-3 py-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Email / User ID</label>
+                    <input type="text" id="loginId" placeholder="e.g. manager or hr@sgxsensortech.com" required class="w-full px-3 py-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Password</label>
-                    <input type="password" id="loginPass" placeholder="••••••••" required class="w-full px-3 py-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    <input type="password" id="loginPass" placeholder="••••••••" required class="w-full px-3 py-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
                 </div>
-                <div id="loginError" class="text-xs text-red-500 font-medium hidden text-center">Invalid User ID or Password.</div>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg text-sm transition">Secure Login</button>
+                <div class="flex justify-between items-center text-xs">
+                    <span class="text-gray-400">Locked out?</span>
+                    <button type="button" onclick="openForgotModal()" class="text-sky-600 font-semibold hover:underline">Forgot Password?</button>
+                </div>
+                <div id="loginError" class="text-xs text-red-500 font-medium hidden text-center">Invalid Credentials. Try manager / Manager@123</div>
+                <button type="submit" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-medium py-3 rounded-lg text-sm transition">Secure Login</button>
+            </form>
+            <div class="mt-4 text-[11px] text-gray-400 text-center leading-relaxed">
+                Default Logins:<br>
+                Manager: <span class="font-mono">manager</span> / <span class="font-mono">Manager@123</span><br>
+                HR: <span class="font-mono">hr@sgxsensortech.com</span> / <span class="font-mono">Hr@123</span><br>
+                IT: <span class="font-mono">it@sgxsensortech.com</span> / <span class="font-mono">It@123</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= FORGOT PASSWORD MODAL ================= -->
+    <div id="forgotModal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 border border-gray-200 space-y-4 relative">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-base font-bold text-slate-900">Reset Password</h3>
+                <button onclick="closeForgotModal()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">&times;</button>
+            </div>
+            <p class="text-xs text-gray-500">Enter your registered Email ID and your assigned Employee ID badge to verify and reset your password.</p>
+            <form onsubmit="handleForgotPassword(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Email / User ID</label>
+                    <input type="text" id="forgotEmail" placeholder="e.g. ravi@sgxsensortech.com" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Employee ID / Badge Serial</label>
+                    <input type="text" id="forgotEmpId" placeholder="e.g. SGX-EMP-092 (Manager use MGR-01)" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">New Password</label>
+                    <input type="password" id="forgotNewPass" placeholder="••••••••" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+                </div>
+                <div id="forgotMsg" class="text-xs font-semibold hidden"></div>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="closeForgotModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2.5 rounded-lg text-sm transition">Cancel</button>
+                    <button type="submit" class="w-1/2 bg-sky-600 hover:bg-sky-700 text-white font-medium py-2.5 rounded-lg text-sm transition">Reset Password</button>
+                </div>
             </form>
         </div>
     </div>
 
     <!-- ================= MAIN APP WORKSPACE ================= -->
-    <aside id="sidebarNav" class="w-full md:w-64 bg-slate-900 text-white flex flex-col shadow-xl z-10 transition-all duration-300 hidden">
-        <div class="p-4 sm:p-5 border-b border-slate-800 flex justify-between items-center">
-            <div>
-                <h1 class="text-base font-bold tracking-wide text-white">Amphenol</h1>
-                <p class="text-[10px] text-blue-400 font-medium tracking-wider uppercase">Exa Thermometrics</p>
+    <aside id="sidebarNav" class="w-64 bg-slate-900 text-white flex flex-col shadow-xl z-20 transition-all duration-300 absolute md:relative -translate-x-full md:translate-x-0 h-full">
+        <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between">
+            <div class="flex flex-col">
+                <div class="flex items-center gap-1">
+                    <span class="text-xl font-black tracking-tight text-slate-300">SGX</span>
+                    <span class="text-xs text-sky-400 font-black">●</span>
+                </div>
+                <span class="text-[10px] font-black tracking-widest text-white uppercase">SENSORTECH</span>
+                <span class="text-[9px] text-sky-400 font-semibold tracking-wider">An Amphenol Company</span>
             </div>
+            <button onclick="toggleSidebar()" class="md:hidden text-gray-400 hover:text-white font-bold text-lg">&times;</button>
         </div>
         
-        <nav class="flex-grow p-3 sm:p-4 space-y-1 overflow-y-auto flex md:flex-col flex-row gap-1 md:gap-0">
-            <button onclick="switchTab('home')" id="nav-home" class="flex-1 md:w-full flex items-center justify-center md:justify-start gap-3 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium bg-blue-600 text-white transition">
-                🏠 <span class="hidden md:inline">Home Dashboard</span><span class="md:hidden">Home</span>
+        <nav class="flex-grow p-3 sm:p-4 space-y-1 overflow-y-auto flex flex-col gap-1">
+            <button onclick="switchTab('home')" id="nav-home" class="w-full flex items-center justify-start gap-2 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium bg-sky-600 text-white transition">
+                🏠 Home Dashboard
             </button>
-            <button onclick="switchTab('manager')" id="nav-manager" class="flex-1 md:w-full flex items-center justify-center md:justify-start gap-3 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
-                👔 <span class="hidden md:inline">Task Board</span><span class="md:hidden">Tasks</span>
+            <button onclick="switchTab('manager')" id="nav-manager" class="w-full flex items-center justify-start gap-2 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                👔 Task Board
             </button>
-            <button onclick="switchTab('attendance')" id="nav-attendance" class="flex-1 md:w-full flex items-center justify-center md:justify-start gap-3 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
-                📍 <span class="hidden md:inline">Location Attendance</span><span class="md:hidden">Attendance</span>
+            <button onclick="switchTab('attendance')" id="nav-attendance" class="w-full flex items-center justify-start gap-2 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                📍 Attendance
             </button>
-            <button onclick="switchTab('createuser')" id="nav-createuser" class="flex-1 md:w-full flex items-center justify-center md:justify-start gap-3 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
-                🔑 <span class="hidden md:inline">Create ID & Pass</span><span class="md:hidden">New ID</span>
+            <!-- Protected Menu Item: Manager & HR Only - Employees Directory & Assessment -->
+            <button onclick="switchTab('employeeslist')" id="nav-employeeslist" class="hidden w-full items-center justify-start gap-2 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                👥 Employees Directory & Assessment
             </button>
-            <button onclick="switchTab('employee')" id="nav-employee" class="flex-1 md:w-full flex items-center justify-center md:justify-start gap-3 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
-                👷 <span class="hidden md:inline">Shift Tasks</span><span class="md:hidden">Shift</span>
+            <!-- Protected Menu Item: Manager & HR Only -->
+            <button onclick="switchTab('createuser')" id="nav-createuser" class="hidden w-full items-center justify-start gap-2 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                🔑 Create ID & Pass
             </button>
-            <button onclick="switchTab('calendar')" id="nav-calendar" class="flex-1 md:w-full flex items-center justify-center md:justify-start gap-3 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
-                📅 <span class="hidden md:inline">Monthly Calendar</span><span class="md:hidden">Calendar</span>
+            <button onclick="switchTab('employee')" id="nav-employee" class="w-full flex items-center justify-start gap-2 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                👷 Shift Tasks
+            </button>
+            <button onclick="switchTab('calendar')" id="nav-calendar" class="w-full flex items-center justify-start gap-2 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                📅 Calendar
+            </button>
+            <button onclick="switchTab('profile')" id="nav-profile" class="w-full flex items-center justify-start gap-2 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                👤 My Profile
+            </button>
+            <button onclick="switchTab('changepass')" id="nav-changepass" class="w-full flex items-center justify-start gap-2 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                🔒 Change Password
             </button>
         </nav>
 
-        <div class="p-3 sm:p-4 border-t border-slate-850 hidden md:block">
+        <div class="p-3 sm:p-4 border-t border-slate-800">
             <button onclick="logout()" class="w-full text-xs bg-slate-800 hover:bg-red-600/20 hover:text-red-400 text-slate-300 py-2 rounded-lg transition font-medium">
                 🔒 Logout
             </button>
@@ -70,38 +141,110 @@
     </aside>
 
     <main id="mainWorkspace" class="flex-grow flex flex-col h-screen overflow-y-auto relative bg-gray-100 hidden">
-        <header class="bg-white border-b px-4 sm:px-8 py-3 sm:py-4 flex flex-col sm:flex-row justify-between items-center gap-2 shadow-sm">
-            <h2 id="pageTitle" class="text-lg sm:text-xl font-bold text-slate-900">Home Dashboard</h2>
-            <div class="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
-                <span id="roleIndicator" class="text-[11px] sm:text-xs bg-blue-50 text-blue-700 font-semibold px-2.5 py-1 rounded-md">Role: Manager</span>
-                <button onclick="logout()" class="md:hidden text-xs bg-red-50 text-red-600 px-2.5 py-1 rounded-md font-semibold">Logout</button>
-                <div class="text-[11px] sm:text-xs font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">
+        <header class="bg-white border-b px-4 sm:px-8 py-3 sm:py-4 flex justify-between items-center gap-2 shadow-sm">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleSidebar()" class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-slate-800 transition font-bold text-sm flex items-center gap-1.5" title="Toggle Menu">
+                    ☰ <span class="hidden sm:inline">Menu</span>
+                </button>
+                <h2 id="pageTitle" class="text-lg sm:text-xl font-bold text-slate-900">Home Dashboard</h2>
+            </div>
+            <div class="flex items-center gap-2 sm:gap-3">
+                <span id="roleIndicator" class="text-[11px] sm:text-xs bg-sky-50 text-sky-700 font-semibold px-2.5 py-1 rounded-md">Role: Manager</span>
+                <button onclick="logout()" class="text-xs bg-red-50 text-red-600 px-2.5 py-1 rounded-md font-semibold md:hidden">Logout</button>
+                <div class="text-[11px] sm:text-xs font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg hidden sm:block">
                     Status: <span class="text-emerald-600 font-bold">Online</span>
                 </div>
             </div>
         </header>
 
         <div class="p-4 sm:p-8 max-w-7xl mx-auto w-full flex-grow pb-16">
-            <!-- VIEW 1: HOME -->
+            <!-- VIEW 1: HOME (Welcome & Announcements Only) -->
             <section id="view-home" class="space-y-6">
                 <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200">
-                    <div class="max-w-xl">
-                        <span class="text-xs font-bold text-blue-600 uppercase tracking-wider bg-blue-50 px-2.5 py-1 rounded-md">Operations Portal</span>
-                        <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-3">Welcome to Amphenol - Exa Thermometrics</h3>
-                        <p class="text-xs sm:text-sm text-gray-600 mt-2 leading-relaxed">Use the navigation menu to browse task boards, geo-fenced attendance logs, and schedules.</p>
+                    <div class="max-w-3xl">
+                        <span class="text-xs font-bold text-sky-600 uppercase tracking-wider bg-sky-50 px-2.5 py-1 rounded-md">SGX Sensortech Operations Portal</span>
+                        <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-3">Welcome to SGX Sensortech</h3>
+                        <p class="text-xs sm:text-sm text-gray-600 mt-2 leading-relaxed">Use the top-left menu bar to access your profile, manage shift tasks, record attendance, and view schedules.</p>
+                    </div>
+                </div>
+
+                <!-- Announcement Creation Card (Manager & HR Only) -->
+                <div id="announcementCreatorCard" class="hidden bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h3 class="text-sm sm:text-base font-bold text-slate-900 mb-3 border-b pb-2">📢 Post Facility Announcement (HR / Manager)</h3>
+                    <form onsubmit="postAnnouncement(event)" class="space-y-3">
+                        <div>
+                            <input type="text" id="announcementTitle" placeholder="Announcement Title (e.g., Safety Briefing Notice)" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-sky-500">
+                        </div>
+                        <div>
+                            <textarea id="announcementContent" rows="3" placeholder="Write announcement details here..." required class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-sky-500"></textarea>
+                        </div>
+                        <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-medium px-5 py-2 rounded-lg text-sm transition">Publish Announcement & Notify All</button>
+                    </form>
+                </div>
+
+                <!-- Announcements Feed (Visible to Everyone) -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <h3 class="text-base font-bold text-slate-900">📌 Company & Plant Announcements</h3>
+                        <span id="announcementCount" class="text-xs bg-sky-50 text-sky-600 px-2.5 py-1 rounded-full font-semibold">0 Active</span>
+                    </div>
+                    <div id="announcementsList" class="space-y-3">
+                        <p class="text-sm text-gray-400 italic">No announcements posted yet.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 1.5: EMPLOYEES DIRECTORY & ASSESSMENT (Manager & HR Only) -->
+            <section id="view-employeeslist" class="hidden space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                        <div class="text-xs font-semibold uppercase text-gray-400">Total Headcount</div>
+                        <div id="empTotalCount" class="text-2xl sm:text-3xl font-bold text-slate-900 mt-1">0</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                        <div class="text-xs font-semibold uppercase text-sky-600">Active Operators & Employees</div>
+                        <div id="empStaffCount" class="text-2xl sm:text-3xl font-bold text-sky-600 mt-1">0</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                        <div class="text-xs font-semibold uppercase text-purple-600">Supervisors & HR</div>
+                        <div id="empSuperCount" class="text-2xl sm:text-3xl font-bold text-purple-600 mt-1">0</div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900">👥 Employee Directory & Data Assessment</h3>
+                            <p class="text-xs text-gray-500">Comprehensive overview of registered personnel credentials, role assignments, and profiles.</p>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[600px]">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
+                                    <th class="p-3 border-b">Full Name & Email (ID)</th>
+                                    <th class="p-3 border-b">Employee ID Badge</th>
+                                    <th class="p-3 border-b">Assigned Role</th>
+                                    <th class="p-3 border-b">Professional Bio / Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employeesDirectoryBody" class="text-sm divide-y divide-gray-100">
+                                <tr><td colspan="4" class="p-4 text-center text-gray-400 italic">No personnel records found.</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </section>
 
             <!-- VIEW 2: MANAGER / SUPERVISOR PORTAL -->
             <section id="view-manager" class="hidden space-y-6 sm:space-y-8">
-                <!-- Location Configuration Card -->
+                <!-- Location Configuration Card (Manager & HR Persistent Setting) -->
                 <div id="locationConfigCard" class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-gray-200">
-                    <h3 class="text-sm sm:text-base font-bold text-slate-900 mb-2">Default Geofence Location Setup</h3>
-                    <p class="text-xs text-gray-500 mb-4">Clicking this button captures your real-time smartphone/desktop GPS coordinates as the official 500m radius attendance center.</p>
+                    <h3 class="text-sm sm:text-base font-bold text-slate-900 mb-2">Persistent Geofence Location Setup (Manager / HR)</h3>
+                    <p class="text-xs text-gray-500 mb-4">Capturing GPS coordinates here saves them permanently as the official plant center so attendance does not need daily reconfiguration.</p>
                     <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
-                        <input type="text" id="defaultLocationInput" placeholder="e.g., Amphenol Plant Unit 1" class="flex-grow px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 w-full">
-                        <button onclick="captureManagerLocation()" class="bg-slate-900 hover:bg-slate-800 text-white font-medium px-5 py-2.5 rounded-lg text-sm transition whitespace-nowrap">📍 Capture My GPS & Update</button>
+                        <input type="text" id="defaultLocationInput" placeholder="e.g., SGX Sensortech Plant Unit" class="flex-grow px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-sky-500 w-full">
+                        <button onclick="captureManagerLocation()" class="bg-slate-900 hover:bg-slate-800 text-white font-medium px-5 py-2.5 rounded-lg text-sm transition whitespace-nowrap">📍 Capture & Save Permanent GPS</button>
                     </div>
                     <div id="managerLocStatus" class="text-xs font-semibold text-gray-500 mt-2">Current Coordinates: Not Set</div>
                 </div>
@@ -116,8 +259,8 @@
                         <div id="statPending" class="text-2xl sm:text-3xl font-bold text-amber-600 mt-2">0</div>
                     </div>
                     <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200">
-                        <div class="text-[10px] sm:text-xs font-semibold uppercase text-blue-500">In Progress</div>
-                        <div id="statProgress" class="text-2xl sm:text-3xl font-bold text-blue-600 mt-2">0</div>
+                        <div class="text-[10px] sm:text-xs font-semibold uppercase text-sky-500">In Progress</div>
+                        <div id="statProgress" class="text-2xl sm:text-3xl font-bold text-sky-600 mt-2">0</div>
                     </div>
                     <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200">
                         <div class="text-[10px] sm:text-xs font-semibold uppercase text-emerald-500">Completed</div>
@@ -125,57 +268,25 @@
                     </div>
                 </div>
 
-                <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-gray-200">
-                    <h3 class="text-sm sm:text-base font-bold text-slate-900 mb-6">Work Completion & Status Graph</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1">
-                                <span>Completed Work</span>
-                                <span id="barCompletedVal">0 tasks</span>
-                            </div>
-                            <div class="w-full bg-gray-100 h-3.5 sm:h-4 rounded-full overflow-hidden">
-                                <div id="barCompleted" class="bg-emerald-500 h-full transition-all duration-500" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1">
-                                <span>In Progress Work</span>
-                                <span id="barProgressVal">0 tasks</span>
-                            </div>
-                            <div class="w-full bg-gray-100 h-3.5 sm:h-4 rounded-full overflow-hidden">
-                                <div id="barProgress" class="bg-blue-500 h-full transition-all duration-500" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1">
-                                <span>Pending Work</span>
-                                <span id="barPendingVal">0 tasks</span>
-                            </div>
-                            <div class="w-full bg-gray-100 h-3.5 sm:h-4 rounded-full overflow-hidden">
-                                <div id="barPending" class="bg-amber-500 h-full transition-all duration-500" style="width: 0%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-                    <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-1 h-fit">
+                    <!-- Assign Task Box (Protected: Manager, HR, Supervisor Only) -->
+                    <div id="taskAssignCard" class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-1 h-fit">
                         <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-4 border-b pb-2">Assign New Task</h3>
                         <form id="taskForm" onsubmit="addTask(event)" class="space-y-4">
                             <div>
                                 <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Task Title / Objective</label>
-                                <input type="text" id="taskTitle" placeholder="e.g., Sensor Calibration" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                <input type="text" id="taskTitle" placeholder="e.g., Gas Sensor Assembly" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Assign to Employee ID</label>
-                                <select id="employeeIdSelect" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                                    <option value="" disabled selected>Select registered employee ID...</option>
+                                <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Assign to Employee Email / ID</label>
+                                <select id="employeeIdSelect" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none bg-white">
+                                    <option value="" disabled selected>Select registered employee...</option>
                                 </select>
                             </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Shift</label>
-                                    <select id="taskShift" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                    <select id="taskShift" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
                                         <option value="Morning">Morning</option>
                                         <option value="Afternoon">Afternoon</option>
                                         <option value="Night">Night</option>
@@ -183,7 +294,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Priority</label>
-                                    <select id="taskPriority" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                    <select id="taskPriority" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
                                         <option value="Low">Low</option>
                                         <option value="Medium" selected>Medium</option>
                                         <option value="High">High</option>
@@ -192,17 +303,17 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Assigned Date</label>
-                                <input type="date" id="taskDate" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                <input type="date" id="taskDate" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Instructions <span class="text-gray-400 font-normal lowercase">(optional)</span></label>
-                                <textarea id="taskDesc" rows="2" placeholder="Optional notes..." class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                                <textarea id="taskDesc" rows="2" placeholder="Optional notes..." class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none"></textarea>
                             </div>
-                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition">Assign Task</button>
+                            <button type="submit" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-medium py-2.5 rounded-lg text-sm transition">Assign Task</button>
                         </form>
                     </div>
 
-                    <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2 flex flex-col">
+                    <div id="taskTableContainer" class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2 flex flex-col">
                         <div class="flex justify-between items-center mb-4 border-b pb-2">
                             <h3 class="text-base sm:text-lg font-bold text-slate-900">Master Task Board</h3>
                             <button onclick="clearTasks()" class="text-xs text-red-600 hover:underline">Clear All</button>
@@ -230,8 +341,8 @@
             <section id="view-attendance" class="hidden space-y-6">
                 <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200 max-w-2xl mx-auto text-center space-y-4">
                     <h3 class="text-lg sm:text-xl font-bold text-slate-900">500m Geofenced Attendance Portal</h3>
-                    <p class="text-xs sm:text-sm text-gray-600">Active Official Plant Name:</p>
-                    <div id="displayDefaultLocation" class="text-sm sm:text-base font-bold text-blue-600 bg-blue-50 p-3 rounded-lg border border-blue-200 inline-block w-full break-words">
+                    <p class="text-xs sm:text-sm text-gray-600">Active Official Plant Name (Saved Permanently):</p>
+                    <div id="displayDefaultLocation" class="text-sm sm:text-base font-bold text-sky-600 bg-sky-50 p-3 rounded-lg border border-sky-200 inline-block w-full break-words">
                         Loading location...
                     </div>
                     <div class="pt-2">
@@ -252,7 +363,7 @@
                         <table class="w-full text-left border-collapse min-w-[500px]">
                             <thead>
                                 <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
-                                    <th class="p-3 border-b">Employee ID</th>
+                                    <th class="p-3 border-b">Employee Email / ID</th>
                                     <th class="p-3 border-b">Date & Time</th>
                                     <th class="p-3 border-b">Plant Location</th>
                                     <th class="p-3 border-b">Distance</th>
@@ -267,30 +378,36 @@
                 </div>
             </section>
 
-            <!-- VIEW 3: CREATE USER PORTAL (Manager Only) -->
+            <!-- VIEW 3: CREATE USER PORTAL (Manager & HR Only - Protected) -->
             <section id="view-createuser" class="hidden max-w-xl mx-auto bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200">
-                <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-4 border-b pb-2">Create New Account Credentials</h3>
+                <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-4 border-b pb-2">Create New Account Credentials via Email</h3>
                 <form onsubmit="createNewUser(event)" class="space-y-4">
                     <div>
                         <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Select Role Type</label>
-                        <select id="newUserRole" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                            <option value="supervisor">Supervisor (Can Manage & Edit Tasks)</option>
-                            <option value="employee">Employee (Can View Assigned Tasks)</option>
+                        <select id="newUserRole" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+                            <option value="employee">Employee (Can view tasks & mark attendance)</option>
+                            <option value="supervisor">Supervisor (Can manage & assign tasks)</option>
+                            <option value="hr">HR (Can create IDs & view attendance)</option>
+                            <option value="it">IT Team (Technical Support & System Admin)</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Employee / Account Name</label>
-                        <input type="text" id="newUserName" placeholder="e.g., Ravi Teja" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Full Name</label>
+                        <input type="text" id="newUserName" placeholder="e.g., Galla Ravi Teja" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Login ID Section</label>
-                        <input type="text" id="newUserId" placeholder="e.g., ravi_t01" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Email Address (Login ID)</label>
+                        <input type="email" id="newUserId" placeholder="e.g., ravi@sgxsensortech.com" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Employee ID <span class="text-gray-400 font-normal lowercase">(e.g., badge or machine serial)</span></label>
+                        <input type="text" id="newUserEmpId" placeholder="e.g., SGX-EMP-092" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Password</label>
-                        <input type="text" id="newUserPass" placeholder="e.g., SecurePass@123" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <input type="text" id="newUserPass" placeholder="e.g., SecurePass@123" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
                     </div>
-                    <div id="createSuccess" class="text-xs text-emerald-600 font-semibold hidden">Account credentials generated successfully!</div>
+                    <div id="createSuccess" class="text-xs text-emerald-600 font-semibold hidden">Account generated successfully! Staff can now log in using their email and password.</div>
                     <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-lg text-sm transition">Create Account</button>
                 </form>
             </section>
@@ -335,6 +452,62 @@
                 </div>
                 <div id="calendarGrid" class="grid grid-cols-7 gap-1 flex-grow overflow-y-auto"></div>
             </section>
+
+            <!-- VIEW 5.5: PROFILE SECTION -->
+            <section id="view-profile" class="hidden max-w-xl mx-auto bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200 space-y-4">
+                <div class="border-b pb-3">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900">Profile & Bio Settings</h3>
+                    <p class="text-xs text-gray-500">View or update profile info. Name, Email, and Role are editable only by Manager and HR.</p>
+                </div>
+                <form onsubmit="handleProfileUpdate(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Full Name <span id="namePermissionNotice" class="text-[10px] text-sky-600 font-normal"></span></label>
+                        <input type="text" id="profileNameInput" class="w-full px-3 py-2 border rounded-lg text-sm bg-gray-50 text-slate-700">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Email / User ID <span id="emailPermissionNotice" class="text-[10px] text-sky-600 font-normal"></span></label>
+                        <input type="text" id="profileEmailInput" class="w-full px-3 py-2 border rounded-lg text-sm bg-gray-50 text-slate-700">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Assigned Role <span id="rolePermissionNotice" class="text-[10px] text-sky-600 font-normal"></span></label>
+                        <select id="profileRoleSelect" class="w-full px-3 py-2 border rounded-lg text-sm bg-white text-slate-700 outline-none">
+                            <option value="employee">Employee</option>
+                            <option value="supervisor">Supervisor</option>
+                            <option value="hr">HR</option>
+                            <option value="it">IT Team</option>
+                            <option value="manager">Manager</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Personal / Professional Bio</label>
+                        <textarea id="profileBioInput" rows="4" placeholder="Write a short bio about your role, department, or shift notes..." class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none"></textarea>
+                    </div>
+                    <div id="profileMsg" class="text-xs font-semibold hidden"></div>
+                    <button type="submit" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-medium py-2.5 rounded-lg text-sm transition">Save Profile Changes</button>
+                </form>
+            </section>
+
+            <!-- VIEW 6: CHANGE PASSWORD PORTAL -->
+            <section id="view-changepass" class="hidden max-w-xl mx-auto bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200">
+                <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-2 border-b pb-2">Change Your Password</h3>
+                <p class="text-xs text-gray-500 mb-4">Update your account login password securely and instantly.</p>
+                <form onsubmit="handlePasswordChange(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Current Password</label>
+                        <input type="password" id="currentPassInput" placeholder="••••••••" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">New Password</label>
+                        <input type="password" id="newPassInput" placeholder="••••••••" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Confirm New Password</label>
+                        <input type="password" id="confirmPassInput" placeholder="••••••••" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+                    </div>
+                    <div id="passwordChangeMsg" class="text-xs font-semibold hidden"></div>
+                    <button type="submit" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-medium py-2.5 rounded-lg text-sm transition">Update Password</button>
+                </form>
+            </section>
         </div>
     </main>
 
@@ -356,13 +529,19 @@
     <script>
         document.getElementById('taskDate').valueAsDate = new Date();
 
-        let customUsers = JSON.parse(localStorage.getItem('customTieredUsersMobileApp')) || {};
-        let tasks = JSON.parse(localStorage.getItem('assignedTasksMobileApp')) || [];
-        let attendanceLogs = JSON.parse(localStorage.getItem('attendanceLogsMobileApp')) || [];
+        let customUsers = JSON.parse(localStorage.getItem('customUsersSGXPersistentLoc')) || {
+            "hr@sgxsensortech.com": { name: "HR Department", empId: "SGX-HR-01", pass: "Hr@123", role: "hr", bio: "HR Department handling recruitment, records, and staff credential management." },
+            "it@sgxsensortech.com": { name: "IT Administrator", empId: "SGX-IT-01", pass: "It@123", role: "it", bio: "IT Administrator managing portals, networks, and technical infrastructure." }
+        };
+        let tasks = JSON.parse(localStorage.getItem('assignedTasksSGXPersistentLoc')) || [];
+        let attendanceLogs = JSON.parse(localStorage.getItem('attendanceLogsSGXPersistentLoc')) || [];
+        let announcements = JSON.parse(localStorage.getItem('announcementsSGXPersistentLoc')) || [
+            { id: 1, title: "Welcome to SGX Sensortech Portal", content: "All employees are instructed to mark their attendance upon entering the 500m plant geofence radius.", date: new Date().toLocaleDateString(), author: "Plant Management" }
+        ];
         
-        let plantName = localStorage.getItem('plantNameMobileApp') || 'Amphenol Plant Unit 1';
-        let plantLat = parseFloat(localStorage.getItem('plantLatMobileApp')) || null;
-        let plantLon = parseFloat(localStorage.getItem('plantLonMobileApp')) || null;
+        let plantName = localStorage.getItem('plantNameSGXPersistentLoc') || 'SGX Sensortech Plant';
+        let plantLat = parseFloat(localStorage.getItem('plantLatSGXPersistentLoc')) || null;
+        let plantLon = parseFloat(localStorage.getItem('plantLonSGXPersistentLoc')) || null;
         
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
@@ -371,20 +550,35 @@
 
         document.getElementById('defaultLocationInput').value = plantName;
         updateManagerLocLabel();
+        renderAnnouncements();
+
+        if ("Notification" in window && Notification.permission !== "granted") {
+            Notification.requestPermission();
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebarNav');
+            sidebar.classList.toggle('-translate-x-full');
+        }
 
         function updateManagerLocLabel() {
             const statusEl = document.getElementById('managerLocStatus');
             const displayEl = document.getElementById('displayDefaultLocation');
             if(plantLat !== null && plantLon !== null) {
-                statusEl.innerText = `Active Anchor Coordinates: ${plantLat.toFixed(5)}, ${plantLon.toFixed(5)}`;
+                statusEl.innerText = `Saved Permanent Anchor Coordinates: ${plantLat.toFixed(5)}, ${plantLon.toFixed(5)}`;
                 displayEl.innerText = `${plantName} (${plantLat.toFixed(4)}, ${plantLon.toFixed(4)})`;
             } else {
-                statusEl.innerText = "Active Anchor Coordinates: Not set yet. Click button to capture GPS.";
+                statusEl.innerText = "Saved Permanent Anchor Coordinates: Not set yet. Click button to capture GPS.";
                 displayEl.innerText = `${plantName} (Coordinates Not Set)`;
             }
         }
 
         function captureManagerLocation() {
+            if (currentRole !== 'manager' && currentRole !== 'hr') {
+                alert("Only Manager and HR can configure persistent plant location coordinates.");
+                return;
+            }
+
             const locName = document.getElementById('defaultLocationInput').value.trim();
             if(!locName) { alert("Please enter a plant name."); return; }
 
@@ -394,7 +588,7 @@
             }
 
             const statusEl = document.getElementById('managerLocStatus');
-            statusEl.innerText = "Capturing your real-time GPS coordinates...";
+            statusEl.innerText = "Capturing your real-time GPS coordinates and saving permanently...";
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -402,12 +596,12 @@
                     plantLon = position.coords.longitude;
                     plantName = locName;
 
-                    localStorage.setItem('plantNameMobileApp', plantName);
-                    localStorage.setItem('plantLatMobileApp', plantLat);
-                    localStorage.setItem('plantLonMobileApp', plantLon);
+                    localStorage.setItem('plantNameSGXPersistentLoc', plantName);
+                    localStorage.setItem('plantLatSGXPersistentLoc', plantLat);
+                    localStorage.setItem('plantLonSGXPersistentLoc', plantLon);
 
                     updateManagerLocLabel();
-                    alert("Plant default location and manager GPS coordinates updated successfully!");
+                    alert("Plant default location saved permanently! Employees can now mark attendance anytime without needing daily updates.");
                 },
                 (error) => {
                     alert("GPS Error: Please enable location permission in your browser settings.");
@@ -433,13 +627,13 @@
             const msg = document.getElementById('attendanceMsg');
 
             if (plantLat === null || plantLon === null) {
-                msg.innerText = "Error: Manager has not configured the default plant location coordinates yet.";
+                msg.innerText = "Error: Plant location coordinates have not been configured by Manager/HR yet.";
                 msg.className = "text-xs font-semibold text-red-600 mt-2";
                 return;
             }
 
             msg.innerText = "Verifying your location against 500m geofence...";
-            msg.className = "text-xs font-semibold text-blue-600 mt-2";
+            msg.className = "text-xs font-semibold text-sky-600 mt-2";
 
             if (!navigator.geolocation) {
                 msg.innerText = "Geolocation is not supported by your device.";
@@ -455,9 +649,13 @@
 
                     if (distanceMeters <= 500) {
                         const now = new Date().toLocaleString();
+                        const userObj = customUsers[loggedInUserId];
+                        const empIdLabel = userObj && userObj.empId ? ` [ID: ${userObj.empId}]` : (loggedInUserId === 'manager' ? ' [ID: MGR-01]' : '');
+                        const displayLogId = loggedInUserId + empIdLabel;
+
                         const newLog = {
                             id: Date.now(),
-                            userId: loggedInUserId,
+                            userId: displayLogId,
                             time: now,
                             locationName: plantName,
                             distance: `${Math.round(distanceMeters)}m`,
@@ -465,7 +663,7 @@
                         };
 
                         attendanceLogs.unshift(newLog);
-                        localStorage.setItem('attendanceLogsMobileApp', JSON.stringify(attendanceLogs));
+                        localStorage.setItem('attendanceLogsSGXPersistentLoc', JSON.stringify(attendanceLogs));
                         renderAttendanceTable();
 
                         msg.innerText = `Attendance marked successfully! (${Math.round(distanceMeters)}m from plant).`;
@@ -476,7 +674,7 @@
                     }
                 },
                 (error) => {
-                    msg.innerText = "GPS Error: Please enable location services on your phone.";
+                    msg.innerText = "GPS Error: Please enable location services on your device.";
                     msg.className = "text-xs font-semibold text-red-600 mt-2";
                 },
                 { enableHighAccuracy: true, timeout: 10000 }
@@ -491,8 +689,8 @@
             }
 
             let displayLogs = attendanceLogs;
-            if (currentRole === 'employee') {
-                displayLogs = attendanceLogs.filter(l => l.userId.toLowerCase() === loggedInUserId.toLowerCase());
+            if (currentRole === 'employee' || currentRole === 'supervisor') {
+                displayLogs = attendanceLogs.filter(l => l.userId.toLowerCase().includes(loggedInUserId.toLowerCase()));
             }
 
             if(displayLogs.length === 0) {
@@ -502,9 +700,9 @@
 
             tbody.innerHTML = displayLogs.map(log => `
                 <tr class="hover:bg-gray-50 transition">
-                    <td class="p-3 font-mono font-bold text-slate-900">@${log.userId}</td>
+                    <td class="p-3 font-mono font-bold text-slate-900">${log.userId}</td>
                     <td class="p-3 text-xs text-gray-600">${log.time}</td>
-                    <td class="p-3 text-xs text-blue-600 font-medium">${log.locationName}</td>
+                    <td class="p-3 text-xs text-sky-600 font-medium">${log.locationName}</td>
                     <td class="p-3 text-xs font-mono text-slate-700">${log.distance}</td>
                     <td class="p-3"><span class="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full">${log.status}</span></td>
                 </tr>
@@ -514,14 +712,122 @@
         function clearAttendance() {
             if (confirm('Clear all attendance logs?')) {
                 attendanceLogs = [];
-                localStorage.removeItem('attendanceLogsMobileApp');
+                localStorage.removeItem('attendanceLogsSGXPersistentLoc');
                 renderAttendanceTable();
             }
         }
 
+        function postAnnouncement(event) {
+            event.preventDefault();
+            if (currentRole !== 'manager' && currentRole !== 'hr') {
+                alert("Only Manager and HR can post announcements.");
+                return;
+            }
+
+            const title = document.getElementById('announcementTitle').value.trim();
+            const content = document.getElementById('announcementContent').value.trim();
+            const authorName = loggedInUserId === 'manager' ? 'Plant Manager' : (customUsers[loggedInUserId] ? customUsers[loggedInUserId].name : 'HR Department');
+
+            const newAnnounce = {
+                id: Date.now(),
+                title: title,
+                content: content,
+                date: new Date().toLocaleDateString(),
+                author: authorName
+            };
+
+            announcements.unshift(newAnnounce);
+            localStorage.setItem('announcementsSGXPersistentLoc', JSON.stringify(announcements));
+            renderAnnouncements();
+            event.target.reset();
+
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification("📢 New Plant Announcement", {
+                    body: `${title}: ${content}`,
+                    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 50'><text x='5' y='38' font-family='sans-serif' font-weight='900' font-size='36' fill='%2364748b'>SGX</text></svg>"
+                });
+            }
+
+            alert("Announcement published and notifications sent!");
+        }
+
+        function deleteAnnouncement(id) {
+            if (currentRole !== 'manager' && currentRole !== 'hr') return;
+            announcements = announcements.filter(a => a.id !== id);
+            localStorage.setItem('announcementsSGXPersistentLoc', JSON.stringify(announcements));
+            renderAnnouncements();
+        }
+
+        function renderAnnouncements() {
+            const listContainer = document.getElementById('announcementsList');
+            const countBadge = document.getElementById('announcementCount');
+            countBadge.innerText = `${announcements.length} Active`;
+
+            if (announcements.length === 0) {
+                listContainer.innerHTML = `<p class="text-sm text-gray-400 italic">No announcements posted yet.</p>`;
+                return;
+            }
+
+            const canManage = (currentRole === 'manager' || currentRole === 'hr');
+
+            listContainer.innerHTML = announcements.map(a => `
+                <div class="border rounded-lg p-4 bg-gray-50 space-y-2 relative">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-slate-900 text-sm sm:text-base">${a.title}</h4>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] text-gray-500 bg-white px-2 py-0.5 rounded border">${a.date}</span>
+                            ${canManage ? `<button onclick="deleteAnnexConfirm(${a.id})" class="text-xs text-red-500 hover:underline">Delete</button>` : ''}
+                        </div>
+                    </div>
+                    <p class="text-xs sm:text-sm text-gray-700 whitespace-pre-wrap">${a.content}</p>
+                    <div class="text-[11px] text-sky-600 font-medium">Posted by: ${a.author}</div>
+                </div>
+            `).join('');
+        }
+
+        function deleteAnnexConfirm(id) {
+            if(confirm("Delete this announcement?")) {
+                deleteAnnouncement(id);
+            }
+        }
+
+        function renderEmployeesDirectory() {
+            const tbody = document.getElementById('employeesDirectoryBody');
+            const totalCountEl = document.getElementById('empTotalCount');
+            const staffCountEl = document.getElementById('empStaffCount');
+            const superCountEl = document.getElementById('empSuperCount');
+
+            let allUsersList = [];
+            allUsersList.push({ email: 'manager', name: 'Plant Manager', empId: 'MGR-01', role: 'manager', bio: localStorage.getItem('managerBioSGXPersistentLoc') || 'Plant Manager overseeing daily operations.' });
+            
+            Object.keys(customUsers).forEach(email => {
+                let u = customUsers[email];
+                allUsersList.push({ email: email, name: u.name, empId: u.empId || 'N/A', role: u.role, bio: u.bio || 'No bio provided.' });
+            });
+
+            totalCountEl.innerText = allUsersList.length;
+            staffCountEl.innerText = allUsersList.filter(u => u.role === 'employee' || u.role === 'it').length;
+            superCountEl.innerText = allUsersList.filter(u => u.role === 'manager' || u.role === 'hr' || u.role === 'supervisor').length;
+
+            tbody.innerHTML = allUsersList.map(u => {
+                let badgeColor = u.role === 'manager' ? 'bg-sky-100 text-sky-800' : u.role === 'hr' ? 'bg-indigo-100 text-indigo-800' : u.role === 'supervisor' ? 'bg-purple-100 text-purple-800' : 'bg-emerald-100 text-emerald-800';
+                return `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="p-3">
+                            <div class="font-bold text-slate-900">${u.name}</div>
+                            <div class="text-xs text-gray-500 font-mono">${u.email}</div>
+                        </td>
+                        <td class="p-3 text-xs font-mono font-semibold text-slate-700">${u.empId}</td>
+                        <td class="p-3"><span class="text-xs font-semibold px-2.5 py-1 rounded-full uppercase ${badgeColor}">${u.role}</span></td>
+                        <td class="p-3 text-xs text-gray-600">${u.bio}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
         function handleLogin(event) {
             event.preventDefault();
-            const idInput = document.getElementById('loginId').value.trim();
+            const idInput = document.getElementById('loginId').value.trim().toLowerCase();
             const passInput = document.getElementById('loginPass').value.trim();
             const errorMsg = document.getElementById('loginError');
 
@@ -538,123 +844,356 @@
             }
         }
 
+        function openForgotModal() {
+            document.getElementById('forgotModal').classList.remove('hidden');
+            document.getElementById('forgotMsg').classList.add('hidden');
+            document.getElementById('forgotEmail').value = '';
+            document.getElementById('forgotEmpId').value = '';
+            document.getElementById('forgotNewPass').value = '';
+        }
+
+        function closeForgotModal() {
+            document.getElementById('forgotModal').classList.add('hidden');
+        }
+
+        function handleForgotPassword(event) {
+            event.preventDefault();
+            const emailInput = document.getElementById('forgotEmail').value.trim().toLowerCase();
+            const empIdInput = document.getElementById('forgotEmpId').value.trim();
+            const newPassInput = document.getElementById('forgotNewPass').value.trim();
+            const msg = document.getElementById('forgotMsg');
+
+            if (emailInput === "manager" && empIdInput.toUpperCase() === "MGR-01") {
+                msg.innerText = "Manager password successfully reset!";
+                msg.className = "text-xs font-semibold text-emerald-600 mt-2";
+                msg.classList.remove('hidden');
+                setTimeout(() => { closeForgotModal(); }, 2000);
+                return;
+            }
+
+            if (customUsers[emailInput]) {
+                if (customUsers[emailInput].empId.toLowerCase() === empIdInput.toLowerCase()) {
+                    customUsers[emailInput].pass = newPassInput;
+                    localStorage.setItem('customUsersSGXPersistentLoc', JSON.stringify(customUsers));
+
+                    msg.innerText = "Password successfully reset! You can now log in.";
+                    msg.className = "text-xs font-semibold text-emerald-600 mt-2";
+                    msg.classList.remove('hidden');
+                    setTimeout(() => { closeForgotModal(); }, 2000);
+                    return;
+                }
+            }
+
+            msg.innerText = "Verification failed: Email or Employee ID does not match our records.";
+            msg.className = "text-xs font-semibold text-red-600 mt-2";
+            msg.classList.remove('hidden');
+        }
+
         function grantAccess() {
             document.getElementById('loginError').classList.add('hidden');
             document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('sidebarNav').classList.remove('hidden');
+            document.getElementById('sidebarNav').classList.remove('-translate-x-full');
             document.getElementById('mainWorkspace').classList.remove('hidden');
 
             const roleBadge = document.getElementById('roleIndicator');
-            const navManager = document.getElementById('nav-manager');
-            const navCreateUser = document.getElementById('nav-createuser');
-            const navEmployee = document.getElementById('nav-employee');
             const locConfigCard = document.getElementById('locationConfigCard');
+            const createUserNav = document.getElementById('nav-createuser');
+            const employeesListNav = document.getElementById('nav-employeeslist');
+            const annexCreatorCard = document.getElementById('announcementCreatorCard');
+            const taskAssignCard = document.getElementById('taskAssignCard');
+            const taskTableContainer = document.getElementById('taskTableContainer');
 
-            if (currentRole === 'manager') {
-                roleBadge.innerText = "Role: Manager";
-                roleBadge.className = "text-[11px] sm:text-xs bg-blue-50 text-blue-700 font-semibold px-2.5 py-1 rounded-md";
-                navManager.style.display = "flex";
-                navCreateUser.style.display = "flex";
-                navEmployee.style.display = "flex";
-                locConfigCard.style.display = "block";
-                switchTab('manager');
+            if (currentRole === 'manager' || currentRole === 'hr') {
+                createUserNav.classList.remove('hidden');
+                createUserNav.classList.add('flex');
+                employeesListNav.classList.remove('hidden');
+                employeesListNav.classList.add('flex');
+                annexCreatorCard.classList.remove('hidden');
+                locConfigCard.style.display = "block"; // Both Manager and HR can manage location
+            } else {
+                createUserNav.classList.add('hidden');
+                createUserNav.classList.remove('flex');
+                employeesListNav.classList.add('hidden');
+                employeesListNav.classList.remove('flex');
+                annexCreatorCard.classList.add('hidden');
+                locConfigCard.style.display = "none";
+            }
+
+            if (currentRole === 'manager' || currentRole === 'hr' || currentRole === 'supervisor') {
+                taskAssignCard.style.display = "block";
+                taskTableContainer.className = "bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2 flex flex-col";
+            } else {
+                taskAssignCard.style.display = "none";
+                taskTableContainer.className = "bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-3 flex flex-col";
+            }
+
+            if (currentRole === 'manager' || currentRole === 'it') {
+                roleBadge.innerText = currentRole === 'manager' ? "Role: Manager" : "Role: IT Administrator";
+                roleBadge.className = "text-[11px] sm:text-xs bg-sky-50 text-sky-700 font-semibold px-2.5 py-1 rounded-md";
+            } else if (currentRole === 'hr') {
+                roleBadge.innerText = "Role: HR Personnel";
+                roleBadge.className = "text-[11px] sm:text-xs bg-indigo-50 text-indigo-700 font-semibold px-2.5 py-1 rounded-md";
             } else if (currentRole === 'supervisor') {
                 roleBadge.innerText = "Role: Supervisor";
                 roleBadge.className = "text-[11px] sm:text-xs bg-purple-50 text-purple-700 font-semibold px-2.5 py-1 rounded-md";
-                navManager.style.display = "flex";
-                navCreateUser.style.display = "none";
-                navEmployee.style.display = "flex";
-                locConfigCard.style.display = "none";
-                switchTab('manager');
             } else {
                 let nameLabel = customUsers[loggedInUserId] ? customUsers[loggedInUserId].name : loggedInUserId;
                 roleBadge.innerText = `Role: Employee (${nameLabel})`;
                 roleBadge.className = "text-[11px] sm:text-xs bg-emerald-50 text-emerald-700 font-semibold px-2.5 py-1 rounded-md";
-                navManager.style.display = "none";
-                navCreateUser.style.display = "none";
-                navEmployee.style.display = "flex";
-                switchTab('attendance');
             }
 
+            switchTab('home');
             updateEmployeeDropdown();
             updateMetrics();
             renderManagerTasks();
             renderEmployeeTasks();
             renderAttendanceTable();
             renderCalendar();
+            renderAnnouncements();
+            renderEmployeesDirectory();
+            loadProfileData();
+        }
+
+        function loadProfileData() {
+            const nameField = document.getElementById('profileNameInput');
+            const emailField = document.getElementById('profileEmailInput');
+            const roleSelect = document.getElementById('profileRoleSelect');
+            const bioField = document.getElementById('profileBioInput');
+            const nameNotice = document.getElementById('namePermissionNotice');
+            const emailNotice = document.getElementById('emailPermissionNotice');
+            const roleNotice = document.getElementById('rolePermissionNotice');
+
+            emailField.value = loggedInUserId;
+            roleSelect.value = currentRole;
+
+            const canEditFields = (currentRole === 'manager' || currentRole === 'hr');
+
+            if (canEditFields) {
+                nameField.removeAttribute('readonly');
+                nameField.className = "w-full px-3 py-2 border rounded-lg text-sm bg-white text-slate-900 focus:ring-2 focus:ring-sky-500 outline-none";
+                nameNotice.innerText = "(Editable by Manager/HR)";
+
+                emailField.removeAttribute('readonly');
+                emailField.className = "w-full px-3 py-2 border rounded-lg text-sm bg-white text-slate-900 focus:ring-2 focus:ring-sky-500 outline-none";
+                emailNotice.innerText = "(Editable by Manager/HR)";
+
+                roleSelect.removeAttribute('disabled');
+                roleSelect.className = "w-full px-3 py-2 border rounded-lg text-sm bg-white text-slate-900 focus:ring-2 focus:ring-sky-500 outline-none";
+                roleNotice.innerText = "(Editable by Manager/HR)";
+            } else {
+                nameField.setAttribute('readonly', true);
+                nameField.className = "w-full px-3 py-2 border rounded-lg text-sm bg-gray-50 text-slate-600";
+                nameNotice.innerText = "(Locked: Only Manager/HR can edit)";
+
+                emailField.setAttribute('readonly', true);
+                emailField.className = "w-full px-3 py-2 border rounded-lg text-sm bg-gray-50 text-slate-600";
+                emailNotice.innerText = "(Locked: Only Manager/HR can edit)";
+
+                roleSelect.setAttribute('disabled', true);
+                roleSelect.className = "w-full px-3 py-2 border rounded-lg text-sm bg-gray-50 text-slate-600";
+                roleNotice.innerText = "(Locked: Only Manager/HR can edit)";
+            }
+
+            if (loggedInUserId === 'manager') {
+                nameField.value = "Plant Manager";
+                let savedMgrBio = localStorage.getItem('managerBioSGXPersistentLoc') || "Plant Manager overseeing daily operations, shift production, and overall facility compliance.";
+                bioField.value = savedMgrBio;
+            } else if (customUsers[loggedInUserId]) {
+                nameField.value = customUsers[loggedInUserId].name;
+                bioField.value = customUsers[loggedInUserId].bio || "";
+            }
+        }
+
+        function handleProfileUpdate(event) {
+            event.preventDefault();
+            const newBio = document.getElementById('profileBioInput').value.trim();
+            const msg = document.getElementById('profileMsg');
+            const canEditFields = (currentRole === 'manager' || currentRole === 'hr');
+
+            if (loggedInUserId === 'manager') {
+                localStorage.setItem('managerBioSGXPersistentLoc', newBio);
+                if (canEditFields) {
+                    const newEmail = document.getElementById('profileEmailInput').value.trim().toLowerCase();
+                    if (newEmail && newEmail !== loggedInUserId) {
+                        loggedInUserId = newEmail;
+                    }
+                }
+            } else if (customUsers[loggedInUserId]) {
+                if (canEditFields) {
+                    const newName = document.getElementById('profileNameInput').value.trim();
+                    const newEmail = document.getElementById('profileEmailInput').value.trim().toLowerCase();
+                    const newAssignedRole = document.getElementById('profileRoleSelect').value;
+
+                    if (newEmail && newEmail !== loggedInUserId) {
+                        customUsers[newEmail] = { ...customUsers[loggedInUserId], name: newName, role: newAssignedRole, bio: newBio };
+                        delete customUsers[loggedInUserId];
+                        loggedInUserId = newEmail;
+                    } else {
+                        customUsers[loggedInUserId].name = newName;
+                        customUsers[loggedInUserId].role = newAssignedRole;
+                        customUsers[loggedInUserId].bio = newBio;
+                    }
+                } else {
+                    customUsers[loggedInUserId].bio = newBio;
+                }
+                localStorage.setItem('customUsersSGXPersistentLoc', JSON.stringify(customUsers));
+            }
+
+            msg.innerText = "Profile updated successfully!";
+            msg.className = "text-xs font-semibold text-emerald-600 mt-2";
+            msg.classList.remove('hidden');
+            setTimeout(() => {
+                msg.classList.add('hidden');
+                loadProfileData();
+            }, 2000);
+            updateEmployeeDropdown();
+            renderEmployeesDirectory();
         }
 
         function updateEmployeeDropdown() {
             const select = document.getElementById('employeeIdSelect');
-            const employeeIds = Object.keys(customUsers).filter(id => customUsers[id].role === 'employee');
+            const employeeIds = Object.keys(customUsers).filter(id => ['employee', 'supervisor'].includes(customUsers[id].role));
             
             select.innerHTML = '';
             if (employeeIds.length === 0) {
-                select.innerHTML = '<option value="" disabled selected>No employees found. Please create ID first.</option>';
+                select.innerHTML = '<option value="" disabled selected>No employees found. Please create ID via HR/Manager portal.</option>';
                 return;
             }
 
-            select.innerHTML = '<option value="" disabled selected>Select registered employee ID...</option>';
+            select.innerHTML = '<option value="" disabled selected>Select registered employee...</option>';
             employeeIds.forEach(id => {
-                let userName = customUsers[id].name || id;
-                select.innerHTML += `<option value="${id}">${userName} (@${id})</option>`;
+                let user = customUsers[id];
+                let empIdTag = user.empId ? ` [ID: ${user.empId}]` : '';
+                select.innerHTML += `<option value="${id}">${user.name}${empIdTag} (${id})</option>`;
             });
         }
 
         function createNewUser(event) {
             event.preventDefault();
+            if (currentRole !== 'manager' && currentRole !== 'hr') {
+                alert("Access Denied: Only Manager and HR can create accounts.");
+                return;
+            }
+
             const nameInput = document.getElementById('newUserName').value.trim();
-            const newId = document.getElementById('newUserId').value.trim();
+            const newId = document.getElementById('newUserId').value.trim().toLowerCase();
+            const empIdInput = document.getElementById('newUserEmpId').value.trim();
             const newPass = document.getElementById('newUserPass').value.trim();
             const newRole = document.getElementById('newUserRole').value;
             const successMsg = document.getElementById('createSuccess');
 
-            customUsers[newId] = { name: nameInput, pass: newPass, role: newRole };
-            localStorage.setItem('customTieredUsersMobileApp', JSON.stringify(customUsers));
+            customUsers[newId] = { name: nameInput, empId: empIdInput, pass: newPass, role: newRole, bio: `New ${newRole} account created.` };
+            localStorage.setItem('customUsersSGXPersistentLoc', JSON.stringify(customUsers));
 
             successMsg.classList.remove('hidden');
-            setTimeout(() => successMsg.classList.add('hidden'), 3000);
+            setTimeout(() => successMsg.classList.add('hidden'), 4000);
             document.getElementById('newUserName').value = '';
             document.getElementById('newUserId').value = '';
+            document.getElementById('newUserEmpId').value = '';
             document.getElementById('newUserPass').value = '';
             updateEmployeeDropdown();
+            renderEmployeesDirectory();
+        }
+
+        function handlePasswordChange(event) {
+            event.preventDefault();
+            const currentPass = document.getElementById('currentPassInput').value.trim();
+            const newPass = document.getElementById('newPassInput').value.trim();
+            const confirmPass = document.getElementById('confirmPassInput').value.trim();
+            const msg = document.getElementById('passwordChangeMsg');
+
+            if (newPass !== confirmPass) {
+                msg.innerText = "New passwords do not match.";
+                msg.className = "text-xs font-semibold text-red-600 mt-2";
+                msg.classList.remove('hidden');
+                return;
+            }
+
+            if (loggedInUserId === "manager") {
+                if (currentPass !== "Manager@123") {
+                    msg.innerText = "Incorrect current password.";
+                    msg.className = "text-xs font-semibold text-red-600 mt-2";
+                    msg.classList.remove('hidden');
+                    return;
+                }
+                alert("Manager password update simulated successfully!");
+                msg.innerText = "Password updated successfully!";
+                msg.className = "text-xs font-semibold text-emerald-600 mt-2";
+                msg.classList.remove('hidden');
+                document.getElementById('currentPassInput').value = '';
+                document.getElementById('newPassInput').value = '';
+                document.getElementById('confirmPassInput').value = '';
+                return;
+            }
+
+            if (customUsers[loggedInUserId]) {
+                if (customUsers[loggedInUserId].pass !== currentPass) {
+                    msg.innerText = "Incorrect current password.";
+                    msg.className = "text-xs font-semibold text-red-600 mt-2";
+                    msg.classList.remove('hidden');
+                    return;
+                }
+                customUsers[loggedInUserId].pass = newPass;
+                localStorage.setItem('customUsersSGXPersistentLoc', JSON.stringify(customUsers));
+
+                msg.innerText = "Password updated successfully!";
+                msg.className = "text-xs font-semibold text-emerald-600 mt-2";
+                msg.classList.remove('hidden');
+                document.getElementById('currentPassInput').value = '';
+                document.getElementById('newPassInput').value = '';
+                document.getElementById('confirmPassInput').value = '';
+            }
         }
 
         function logout() {
             document.getElementById('loginId').value = "";
             document.getElementById('loginPass').value = "";
             document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('sidebarNav').classList.add('hidden');
+            document.getElementById('sidebarNav').classList.add('-translate-x-full');
             document.getElementById('mainWorkspace').classList.add('hidden');
         }
 
         function switchTab(tabId) {
-            const tabs = ['home', 'manager', 'attendance', 'createuser', 'employee', 'calendar'];
+            if ((tabId === 'createuser' || tabId === 'employeeslist') && currentRole !== 'manager' && currentRole !== 'hr') {
+                alert("Unauthorized Access");
+                return;
+            }
+
+            const tabs = ['home', 'employeeslist', 'manager', 'attendance', 'createuser', 'employee', 'calendar', 'profile', 'changepass'];
             const titles = {
                 'home': 'Home Dashboard',
-                'manager': 'Task Management',
-                'attendance': '500m Attendance',
+                'employeeslist': 'Employees Directory & Assessment',
+                'manager': 'Task Management Board',
+                'attendance': 'GPS Attendance Logs',
                 'createuser': 'Create ID & Pass',
                 'employee': 'Shift Tasks',
-                'calendar': 'Schedule Calendar'
+                'calendar': 'Schedule Calendar',
+                'profile': 'Profile & Bio Settings',
+                'changepass': 'Change Password'
             };
 
             tabs.forEach(t => {
                 const view = document.getElementById(`view-${t}`);
                 const nav = document.getElementById(`nav-${t}`);
                 if(view) view.classList.add('hidden');
-                if(nav) nav.className = "flex-1 md:w-full flex items-center justify-center md:justify-start gap-3 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition";
+                if(nav) {
+                    nav.className = nav.className.replace('bg-sky-600 text-white', 'text-slate-300 hover:bg-slate-800 hover:text-white');
+                }
             });
 
             const activeView = document.getElementById(`view-${tabId}`);
             const activeNav = document.getElementById(`nav-${tabId}`);
             if(activeView) activeView.classList.remove('hidden');
-            if(activeNav) activeNav.className = "flex-1 md:w-full flex items-center justify-center md:justify-start gap-3 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium bg-blue-600 text-white transition";
+            if(activeNav) {
+                activeNav.className = activeNav.className.replace('text-slate-300 hover:bg-slate-800 hover:text-white', '') + " bg-sky-600 text-white";
+            }
             document.getElementById('pageTitle').innerText = titles[tabId];
 
             if(tabId === 'calendar') renderCalendar();
             if(tabId === 'employee') renderEmployeeTasks();
             if(tabId === 'attendance') renderAttendanceTable();
+            if(tabId === 'employeeslist') renderEmployeesDirectory();
+            if(tabId === 'profile') loadProfileData();
             if(tabId === 'manager') {
                 updateEmployeeDropdown();
                 updateManagerLocLabel();
@@ -664,11 +1203,17 @@
         function addTask(event) {
             event.preventDefault();
             
+            if (currentRole !== 'manager' && currentRole !== 'hr' && currentRole !== 'supervisor') {
+                alert("Access Denied: Regular employees cannot assign tasks.");
+                return;
+            }
+
             const empId = document.getElementById('employeeIdSelect').value;
-            if (!empId) { alert("Please select an employee ID before assigning a task."); return; }
+            if (!empId) { alert("Please select an employee before assigning a task."); return; }
 
             const empObj = customUsers[empId];
-            const empDisplayName = empObj ? `${empObj.name} (@${empId})` : empId;
+            const empIdTag = empObj && empObj.empId ? ` [ID: ${empObj.empId}]` : '';
+            const empDisplayName = empObj ? `${empObj.name}${empIdTag} (${empId})` : empId;
 
             const newTask = {
                 id: Date.now(),
@@ -683,7 +1228,7 @@
             };
 
             tasks.unshift(newTask);
-            localStorage.setItem('assignedTasksMobileApp', JSON.stringify(tasks));
+            localStorage.setItem('assignedTasksSGXPersistentLoc', JSON.stringify(tasks));
             
             updateMetrics();
             renderManagerTasks();
@@ -698,7 +1243,7 @@
 
         function updateStatus(id, newStatus) {
             tasks = tasks.map(t => t.id === id ? { ...t, status: newStatus } : t);
-            localStorage.setItem('assignedTasksMobileApp', JSON.stringify(tasks));
+            localStorage.setItem('assignedTasksSGXPersistentLoc', JSON.stringify(tasks));
             updateMetrics();
             renderManagerTasks();
             renderEmployeeTasks();
@@ -706,8 +1251,12 @@
         }
 
         function deleteTask(id) {
+            if (currentRole === 'employee') {
+                alert("Unauthorized action.");
+                return;
+            }
             tasks = tasks.filter(t => t.id !== id);
-            localStorage.setItem('assignedTasksMobileApp', JSON.stringify(tasks));
+            localStorage.setItem('assignedTasksSGXPersistentLoc', JSON.stringify(tasks));
             updateMetrics();
             renderManagerTasks();
             renderEmployeeTasks();
@@ -724,18 +1273,6 @@
             document.getElementById('statPending').innerText = pending;
             document.getElementById('statProgress').innerText = progress;
             document.getElementById('statCompleted').innerText = completed;
-
-            document.getElementById('barCompletedVal').innerText = `${completed} tasks`;
-            document.getElementById('barProgressVal').innerText = `${progress} tasks`;
-            document.getElementById('barPendingVal').innerText = `${pending} tasks`;
-
-            const compPercent = total > 0 ? (completed / total) * 100 : 0;
-            const progPercent = total > 0 ? (progress / total) * 100 : 0;
-            const pendPercent = total > 0 ? (pending / total) * 100 : 0;
-
-            document.getElementById('barCompleted').style.width = `${compPercent}%`;
-            document.getElementById('barProgress').style.width = `${progPercent}%`;
-            document.getElementById('barPending').style.width = `${pendPercent}%`;
         }
 
         function renderManagerTasks() {
@@ -745,15 +1282,17 @@
                 return;
             }
 
+            const canDelete = (currentRole !== 'employee');
+
             tbody.innerHTML = tasks.map(task => {
-                let statusBadge = task.status === 'Pending' ? 'bg-amber-100 text-amber-800' : task.status === 'In Progress' ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800';
+                let statusBadge = task.status === 'Pending' ? 'bg-amber-100 text-amber-800' : task.status === 'In Progress' ? 'bg-sky-100 text-sky-800' : 'bg-emerald-100 text-emerald-800';
                 let priorityBadge = task.priority === 'High' ? 'bg-red-50 text-red-600 border border-red-200' : task.priority === 'Medium' ? 'bg-orange-50 text-orange-600 border border-orange-200' : 'bg-slate-50 text-slate-600 border border-slate-200';
 
                 return `
                     <tr class="hover:bg-gray-50 transition">
                         <td class="p-3">
                             <div class="font-bold text-slate-900">${task.title}</div>
-                            <div class="text-xs text-blue-600 font-medium font-mono">Assigned To: ${task.employeeName}</div>
+                            <div class="text-xs text-sky-600 font-medium font-mono">Assigned To: ${task.employeeName}</div>
                             <div class="text-xs text-gray-500 mt-0.5">${task.desc}</div>
                         </td>
                         <td class="p-3 space-y-1">
@@ -771,7 +1310,7 @@
                                 <option value="Completed" ${task.status === 'Completed' ? 'selected' : ''}>Completed</option>
                             </select>
                             <br>
-                            <button onclick="deleteTask(${task.id})" class="text-[10px] text-red-500 hover:underline">Delete</button>
+                            ${canDelete ? `<button onclick="deleteTask(${task.id})" class="text-[10px] text-red-500 hover:underline">Delete</button>` : ''}
                         </td>
                     </tr>
                 `;
@@ -783,8 +1322,8 @@
             const subtitle = document.getElementById('employeeSubtitle');
 
             let filteredTasks = tasks;
-            if (currentRole === 'employee') {
-                subtitle.innerText = `Showing tasks assigned to ID: @${loggedInUserId}`;
+            if (currentRole === 'employee' || currentRole === 'supervisor') {
+                subtitle.innerText = `Showing tasks assigned to: ${loggedInUserId}`;
                 filteredTasks = tasks.filter(t => t.employeeId.toLowerCase() === loggedInUserId.toLowerCase());
             } else {
                 subtitle.innerText = "Review and update active team task statuses.";
@@ -796,13 +1335,13 @@
             }
 
             tbody.innerHTML = filteredTasks.map(task => {
-                let statusBadge = task.status === 'Pending' ? 'bg-amber-100 text-amber-800' : task.status === 'In Progress' ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800';
+                let statusBadge = task.status === 'Pending' ? 'bg-amber-100 text-amber-800' : task.status === 'In Progress' ? 'bg-sky-100 text-sky-800' : 'bg-emerald-100 text-emerald-800';
 
                 return `
                     <tr class="hover:bg-gray-50 transition">
                         <td class="p-3">
                             <div class="font-bold text-slate-900">${task.title}</div>
-                            <div class="text-xs text-blue-600 font-medium font-mono">Assigned To: ${task.employeeName}</div>
+                            <div class="text-xs text-sky-600 font-medium font-mono">Assigned To: ${task.employeeName}</div>
                         </td>
                         <td class="p-3">
                             <span class="text-[10px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded block w-max mb-1">${task.shift} Shift</span>
@@ -848,18 +1387,18 @@
                 const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 let dayTasks = tasks.filter(t => t.date === dateString);
                 
-                if (currentRole === 'employee') {
+                if (currentRole === 'employee' || currentRole === 'supervisor') {
                     dayTasks = dayTasks.filter(t => t.employeeId.toLowerCase() === loggedInUserId.toLowerCase());
                 }
 
                 let tasksHTML = dayTasks.map(t => `
-                    <div class="text-[8px] sm:text-[9px] bg-blue-50 text-blue-700 font-medium px-1 py-0.5 rounded truncate mb-0.5">
+                    <div class="text-[8px] sm:text-[9px] bg-sky-50 text-sky-700 font-medium px-1 py-0.5 rounded truncate mb-0.5">
                         ${t.title}
                     </div>
                 `).join('');
 
                 grid.innerHTML += `
-                    <div onclick="openDayModal('${dateString}')" class="bg-white border rounded-lg p-1 sm:p-1.5 min-h-[65px] sm:min-h-[90px] flex flex-col cursor-pointer hover:border-blue-500 hover:shadow-sm transition">
+                    <div onclick="openDayModal('${dateString}')" class="bg-white border rounded-lg p-1 sm:p-1.5 min-h-[65px] sm:min-h-[90px] flex flex-col cursor-pointer hover:border-sky-500 hover:shadow-sm transition">
                         <div class="text-[10px] sm:text-xs font-bold text-slate-700 mb-1">${day}</div>
                         <div class="flex-grow overflow-hidden space-y-0.5">${tasksHTML}</div>
                     </div>
@@ -875,7 +1414,7 @@
             modalTitle.innerText = `Tasks for ${dateStr}`;
             let dayTasks = tasks.filter(t => t.date === dateStr);
 
-            if (currentRole === 'employee') {
+            if (currentRole === 'employee' || currentRole === 'supervisor') {
                 dayTasks = dayTasks.filter(t => t.employeeId.toLowerCase() === loggedInUserId.toLowerCase());
             }
 
@@ -883,14 +1422,14 @@
                 modalList.innerHTML = `<p class="text-sm text-gray-400 italic text-center py-6">No tasks assigned for this date.</p>`;
             } else {
                 modalList.innerHTML = dayTasks.map(t => {
-                    let statusBadge = t.status === 'Pending' ? 'bg-amber-100 text-amber-800' : t.status === 'In Progress' ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800';
+                    let statusBadge = t.status === 'Pending' ? 'bg-amber-100 text-amber-800' : t.status === 'In Progress' ? 'bg-sky-100 text-sky-800' : 'bg-emerald-100 text-emerald-800';
                     return `
                         <div class="border rounded-lg p-3 bg-gray-50 space-y-1">
                             <div class="flex justify-between items-start">
                                 <span class="font-bold text-slate-900 text-sm">${t.title}</span>
                                 <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full ${statusBadge}">${t.status}</span>
                             </div>
-                            <div class="text-xs text-blue-600 font-medium">Assigned To: ${t.employeeName} (${t.shift} Shift)</div>
+                            <div class="text-xs text-sky-600 font-medium">Assigned To: ${t.employeeName} (${t.shift} Shift)</div>
                             <div class="text-xs text-gray-600">${t.desc}</div>
                         </div>
                     `;
@@ -905,9 +1444,13 @@
         }
 
         function clearTasks() {
+            if (currentRole === 'employee') {
+                alert("Unauthorized action.");
+                return;
+            }
             if (confirm('Clear all tasks?')) {
                 tasks = [];
-                localStorage.removeItem('assignedTasksMobileApp');
+                localStorage.removeItem('assignedTasksSGXPersistentLoc');
                 updateMetrics();
                 renderManagerTasks();
                 renderEmployeeTasks();
