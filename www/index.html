@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SGX Sensortech - Operations Portal</title>
-    <!-- Favicon / App Icon Branding matching SGX logo -->
+    <!-- Favicon matching official SGX logo branding -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 50'><text x='5' y='38' font-family='sans-serif' font-weight='900' font-size='36' fill='%2364748b'>SGX</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -14,24 +14,16 @@
     <div id="loginScreen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 border border-slate-800 relative">
             <div class="mb-6 text-center flex flex-col items-center">
-                <!-- SGX Sensortech Logo Recreation -->
-                <div class="flex items-center gap-1 mb-1">
-                    <span class="text-3xl font-black tracking-tight text-slate-600">SGX</span>
-                    <div class="relative w-10 h-8 flex items-center justify-center">
-                        <svg class="w-full h-full text-sky-400" viewBox="0 0 40 30" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
-                            <path d="M 5 25 Q 15 5 35 10" />
-                        </svg>
-                        <div class="absolute top-0 right-0 flex gap-0.5">
-                            <span class="w-1 h-2 bg-sky-400 transform rotate-45"></span>
-                            <span class="w-1 h-3 bg-sky-400 transform rotate-45"></span>
-                        </div>
-                    </div>
+                <!-- SGX SENSOSTECH LOGO EMBED (PRECISELY CENTERED & ALIGNED) -->
+                <div class="w-64 max-w-full mb-2 flex justify-center">
+                    <svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto">
+                        <text x="260" y="125" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="125" fill="#64748b" letter-spacing="-4">SGX</text>
+                        <text x="260" y="185" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="500" font-size="52" fill="#111827" letter-spacing="-1">Sensortech</text>
+                        <text x="260" y="218" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="600" font-size="28" fill="#009be8">An Amphenol Company</text>
+                    </svg>
                 </div>
-                <div class="text-xl font-black tracking-widest text-black uppercase">SENSORTECH</div>
-                <p class="text-[11px] text-sky-500 font-bold tracking-wider uppercase mt-0.5">An Amphenol Company</p>
             </div>
 
-            <!-- Login Form -->
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Email / User ID</label>
@@ -90,13 +82,13 @@
     <!-- ================= MAIN APP WORKSPACE ================= -->
     <aside id="sidebarNav" class="w-64 bg-slate-900 text-white flex flex-col shadow-xl z-20 transition-all duration-300 absolute md:relative -translate-x-full md:translate-x-0 h-full">
         <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between">
-            <div class="flex flex-col">
-                <div class="flex items-center gap-1">
-                    <span class="text-xl font-black tracking-tight text-slate-300">SGX</span>
-                    <span class="text-xs text-sky-400 font-black">●</span>
-                </div>
-                <span class="text-[10px] font-black tracking-widest text-white uppercase">SENSORTECH</span>
-                <span class="text-[9px] text-sky-400 font-semibold tracking-wider">An Amphenol Company</span>
+            <div class="flex flex-col w-40">
+                <!-- SIDEBAR LOGO EMBED (PRECISELY CENTERED & ALIGNED) -->
+                <svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto">
+                    <text x="260" y="125" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="125" fill="#cbd5e1" letter-spacing="-4">SGX</text>
+                    <text x="260" y="185" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="500" font-size="52" fill="#ffffff" letter-spacing="-1">Sensortech</text>
+                    <text x="260" y="218" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="600" font-size="28" fill="#009be8">An Amphenol Company</text>
+                </svg>
             </div>
             <button onclick="toggleSidebar()" class="md:hidden text-gray-400 hover:text-white font-bold text-lg">&times;</button>
         </div>
@@ -109,13 +101,11 @@
                 👔 Task Board
             </button>
             <button onclick="switchTab('attendance')" id="nav-attendance" class="w-full flex items-center justify-start gap-2 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
-                📍 Attendance
+                📍 Attendance & Punch-Out
             </button>
-            <!-- Protected Menu Item: Manager & HR Only - Employees Directory & Assessment -->
             <button onclick="switchTab('employeeslist')" id="nav-employeeslist" class="hidden w-full items-center justify-start gap-2 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
                 👥 Employees Directory & Assessment
             </button>
-            <!-- Protected Menu Item: Manager & HR Only -->
             <button onclick="switchTab('createuser')" id="nav-createuser" class="hidden w-full items-center justify-start gap-2 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
                 🔑 Create ID & Pass
             </button>
@@ -158,7 +148,7 @@
         </header>
 
         <div class="p-4 sm:p-8 max-w-7xl mx-auto w-full flex-grow pb-16">
-            <!-- VIEW 1: HOME (Welcome & Announcements Only) -->
+            <!-- VIEW 1: HOME -->
             <section id="view-home" class="space-y-6">
                 <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200">
                     <div class="max-w-3xl">
@@ -168,7 +158,32 @@
                     </div>
                 </div>
 
-                <!-- Announcement Creation Card (Manager & HR Only) -->
+                <!-- EMPLOYEE HOME TASKS WIDGET (ONLY VISIBLE TO EMPLOYEES) -->
+                <div id="employeeHomeTasksCard" class="hidden bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900">📋 Your Assigned Shift Tasks</h3>
+                            <p class="text-xs text-gray-500">Quick view and status updates for your tasks right on your home page.</p>
+                        </div>
+                        <span id="homeTaskCountBadge" class="text-xs bg-sky-50 text-sky-600 px-2.5 py-1 rounded-full font-semibold">0 Tasks</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[500px]">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
+                                    <th class="p-3 border-b">Task Objective</th>
+                                    <th class="p-3 border-b">Shift & Date</th>
+                                    <th class="p-3 border-b">Instructions</th>
+                                    <th class="p-3 border-b">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="homeEmployeeTableBody" class="text-sm divide-y divide-gray-100">
+                                <tr><td colspan="4" class="p-4 text-center text-gray-400 italic">No tasks currently assigned to you.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <div id="announcementCreatorCard" class="hidden bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                     <h3 class="text-sm sm:text-base font-bold text-slate-900 mb-3 border-b pb-2">📢 Post Facility Announcement (HR / Manager)</h3>
                     <form onsubmit="postAnnouncement(event)" class="space-y-3">
@@ -182,7 +197,6 @@
                     </form>
                 </div>
 
-                <!-- Announcements Feed (Visible to Everyone) -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
                     <div class="flex justify-between items-center border-b pb-2">
                         <h3 class="text-base font-bold text-slate-900">📌 Company & Plant Announcements</h3>
@@ -194,7 +208,7 @@
                 </div>
             </section>
 
-            <!-- VIEW 1.5: EMPLOYEES DIRECTORY & ASSESSMENT (Manager & HR Only) -->
+            <!-- VIEW 1.5: EMPLOYEES DIRECTORY & ASSESSMENT -->
             <section id="view-employeeslist" class="hidden space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
@@ -214,15 +228,15 @@
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
                     <div class="flex justify-between items-center border-b pb-2">
                         <div>
-                            <h3 class="text-base font-bold text-slate-900">👥 Employee Directory & Data Assessment</h3>
-                            <p class="text-xs text-gray-500">Comprehensive overview of registered personnel credentials, role assignments, and profiles.</p>
+                            <h3 class="text-base font-bold text-slate-900">👥 Employee Directory & Assessment</h3>
+                            <p class="text-xs text-gray-500">Click on any employee name below to inspect their complete profile, days present, and hourly analytics graph.</p>
                         </div>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse min-w-[600px]">
                             <thead>
                                 <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
-                                    <th class="p-3 border-b">Full Name & Email (ID)</th>
+                                    <th class="p-3 border-b">Full Name & Email (Click for Profile)</th>
                                     <th class="p-3 border-b">Employee ID Badge</th>
                                     <th class="p-3 border-b">Assigned Role</th>
                                     <th class="p-3 border-b">Professional Bio / Notes</th>
@@ -238,17 +252,6 @@
 
             <!-- VIEW 2: MANAGER / SUPERVISOR PORTAL -->
             <section id="view-manager" class="hidden space-y-6 sm:space-y-8">
-                <!-- Location Configuration Card (Manager & HR Persistent Setting) -->
-                <div id="locationConfigCard" class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-gray-200">
-                    <h3 class="text-sm sm:text-base font-bold text-slate-900 mb-2">Persistent Geofence Location Setup (Manager / HR)</h3>
-                    <p class="text-xs text-gray-500 mb-4">Capturing GPS coordinates here saves them permanently as the official plant center so attendance does not need daily reconfiguration.</p>
-                    <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
-                        <input type="text" id="defaultLocationInput" placeholder="e.g., SGX Sensortech Plant Unit" class="flex-grow px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-sky-500 w-full">
-                        <button onclick="captureManagerLocation()" class="bg-slate-900 hover:bg-slate-800 text-white font-medium px-5 py-2.5 rounded-lg text-sm transition whitespace-nowrap">📍 Capture & Save Permanent GPS</button>
-                    </div>
-                    <div id="managerLocStatus" class="text-xs font-semibold text-gray-500 mt-2">Current Coordinates: Not Set</div>
-                </div>
-
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
                     <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200">
                         <div class="text-[10px] sm:text-xs font-semibold uppercase text-gray-400">Total Tasks</div>
@@ -269,7 +272,6 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-                    <!-- Assign Task Box (Protected: Manager, HR, Supervisor Only) -->
                     <div id="taskAssignCard" class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-1 h-fit">
                         <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-4 border-b pb-2">Assign New Task</h3>
                         <form id="taskForm" onsubmit="addTask(event)" class="space-y-4">
@@ -339,34 +341,47 @@
 
             <!-- VIEW 2.5: LOCATION ATTENDANCE PORTAL -->
             <section id="view-attendance" class="hidden space-y-6">
+                <!-- Location Configuration Card -->
+                <div id="locationConfigCard" class="hidden bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-gray-200 max-w-2xl mx-auto">
+                    <h3 class="text-sm sm:text-base font-bold text-slate-900 mb-2">Persistent Geofence Location Setup (Manager / HR)</h3>
+                    <p class="text-xs text-gray-500 mb-4">Capturing GPS coordinates here saves them permanently as the official plant center so attendance does not need daily reconfiguration.</p>
+                    <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                        <input type="text" id="defaultLocationInput" placeholder="e.g., SGX Sensortech Plant Unit" class="flex-grow px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-sky-500 w-full">
+                        <button onclick="captureManagerLocation()" class="bg-slate-900 hover:bg-slate-800 text-white font-medium px-5 py-2.5 rounded-lg text-sm transition whitespace-nowrap">📍 Capture & Save Permanent GPS</button>
+                    </div>
+                    <div id="managerLocStatus" class="text-xs font-semibold text-gray-500 mt-2">Current Coordinates: Not Set</div>
+                </div>
+
                 <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200 max-w-2xl mx-auto text-center space-y-4">
-                    <h3 class="text-lg sm:text-xl font-bold text-slate-900">500m Geofenced Attendance Portal</h3>
-                    <p class="text-xs sm:text-sm text-gray-600">Active Official Plant Name (Saved Permanently):</p>
+                    <h3 class="text-lg sm:text-xl font-bold text-slate-900">500m Geofenced Attendance & Punch-Out Portal</h3>
+                    <p class="text-xs sm:text-sm text-gray-600">Active Plant Location:</p>
                     <div id="displayDefaultLocation" class="text-sm sm:text-base font-bold text-sky-600 bg-sky-50 p-3 rounded-lg border border-sky-200 inline-block w-full break-words">
                         Loading location...
                     </div>
-                    <div class="pt-2">
-                        <button onclick="markAttendance()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3 rounded-xl shadow-md transition text-sm">
-                            📍 Mark Attendance (Verify 500m Radius)
+                    <div class="pt-2 flex flex-col sm:flex-row justify-center gap-3">
+                        <button onclick="markClockIn()" id="clockInBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl shadow-md transition text-sm">
+                            🟢 Clock In (Punch In)
+                        </button>
+                        <button onclick="markClockOut()" id="clockOutBtn" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-3 rounded-xl shadow-md transition text-sm hidden">
+                            🔴 Clock Out (Punch Out & Calculate Hours)
                         </button>
                     </div>
                     <div id="attendanceMsg" class="text-xs font-semibold mt-2"></div>
                 </div>
 
-                <!-- Attendance Records Table -->
                 <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-gray-200">
                     <div class="flex justify-between items-center mb-4 border-b pb-2">
-                        <h4 class="text-sm sm:text-base font-bold text-slate-900">Verified Attendance Punch Logs</h4>
+                        <h4 class="text-sm sm:text-base font-bold text-slate-900">Verified Attendance & Working Hours Logs</h4>
                         <button onclick="clearAttendance()" class="text-xs text-red-600 hover:underline">Clear Logs</button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse min-w-[500px]">
                             <thead>
                                 <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
-                                    <th class="p-3 border-b">Employee Email / ID</th>
-                                    <th class="p-3 border-b">Date & Time</th>
-                                    <th class="p-3 border-b">Plant Location</th>
-                                    <th class="p-3 border-b">Distance</th>
+                                    <th class="p-3 border-b">Employee ID</th>
+                                    <th class="p-3 border-b">Clock-In Time</th>
+                                    <th class="p-3 border-b">Clock-Out Time</th>
+                                    <th class="p-3 border-b">Total Working Hours</th>
                                     <th class="p-3 border-b">Status</th>
                                 </tr>
                             </thead>
@@ -378,7 +393,7 @@
                 </div>
             </section>
 
-            <!-- VIEW 3: CREATE USER PORTAL (Manager & HR Only - Protected) -->
+            <!-- VIEW 3: CREATE USER PORTAL -->
             <section id="view-createuser" class="hidden max-w-xl mx-auto bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200">
                 <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-4 border-b pb-2">Create New Account Credentials via Email</h3>
                 <form onsubmit="createNewUser(event)" class="space-y-4">
@@ -525,23 +540,66 @@
         </div>
     </div>
 
+    <!-- EMPLOYEE PROFILE ASSESSMENT MODAL -->
+    <div id="employeeProfileModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 sm:p-8 flex flex-col max-h-[90vh] overflow-y-auto relative space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <div>
+                    <h3 id="profileModalName" class="text-lg font-extrabold text-slate-900">Employee Assessment</h3>
+                    <p id="profileModalEmail" class="text-xs text-gray-500 font-mono"></p>
+                </div>
+                <button onclick="closeEmployeeProfileModal()" class="text-gray-400 hover:text-gray-600 font-bold text-xl">&times;</button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-sky-50 p-4 rounded-xl border border-sky-100">
+                    <div class="text-xs font-semibold text-sky-600 uppercase">Total Days Present</div>
+                    <div id="profileModalDaysCount" class="text-2xl font-black text-slate-900 mt-1">0 Days</div>
+                </div>
+                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                    <div class="text-xs font-semibold text-emerald-600 uppercase">Total Hours Logged</div>
+                    <div id="profileModalHoursCount" class="text-2xl font-black text-slate-900 mt-1">0.0 Hrs</div>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <h4 class="text-xs font-bold uppercase text-gray-600 tracking-wider">📊 Daily Working Hours Graph Assessment</h4>
+                <div id="profileModalGraphContainer" class="bg-slate-50 border rounded-xl p-4 space-y-2 min-h-[140px] flex flex-col justify-center">
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <h4 class="text-xs font-bold uppercase text-gray-600 tracking-wider">Punch Log History</h4>
+                <div id="profileModalLogsList" class="space-y-1 max-h-40 overflow-y-auto text-xs">
+                </div>
+            </div>
+
+            <div class="pt-3 border-t flex justify-between items-center">
+                <button id="deleteEmployeeBtn" onclick="" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-4 py-2 rounded-lg text-xs font-semibold transition hidden">
+                    🗑️ Terminate & Delete Profile
+                </button>
+                <button onclick="closeEmployeeProfileModal()" class="bg-slate-900 text-white px-5 py-2 rounded-lg text-xs font-medium hover:bg-slate-800 transition ml-auto">Close Assessment</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripting Logic -->
     <script>
         document.getElementById('taskDate').valueAsDate = new Date();
 
-        let customUsers = JSON.parse(localStorage.getItem('customUsersSGXPersistentLoc')) || {
+        let customUsers = JSON.parse(localStorage.getItem('customUsersSGXCentered')) || {
             "hr@sgxsensortech.com": { name: "HR Department", empId: "SGX-HR-01", pass: "Hr@123", role: "hr", bio: "HR Department handling recruitment, records, and staff credential management." },
             "it@sgxsensortech.com": { name: "IT Administrator", empId: "SGX-IT-01", pass: "It@123", role: "it", bio: "IT Administrator managing portals, networks, and technical infrastructure." }
         };
-        let tasks = JSON.parse(localStorage.getItem('assignedTasksSGXPersistentLoc')) || [];
-        let attendanceLogs = JSON.parse(localStorage.getItem('attendanceLogsSGXPersistentLoc')) || [];
-        let announcements = JSON.parse(localStorage.getItem('announcementsSGXPersistentLoc')) || [
-            { id: 1, title: "Welcome to SGX Sensortech Portal", content: "All employees are instructed to mark their attendance upon entering the 500m plant geofence radius.", date: new Date().toLocaleDateString(), author: "Plant Management" }
+        let tasks = JSON.parse(localStorage.getItem('assignedTasksSGXCentered')) || [];
+        let attendanceLogs = JSON.parse(localStorage.getItem('attendanceLogsSGXCentered')) || [];
+        let announcements = JSON.parse(localStorage.getItem('announcementsSGXCentered')) || [
+            { id: 1, title: "Welcome to SGX Sensortech Portal", content: "All employees are instructed to mark their attendance and clock out upon shift completion.", date: new Date().toLocaleDateString(), author: "Plant Management" }
         ];
         
-        let plantName = localStorage.getItem('plantNameSGXPersistentLoc') || 'SGX Sensortech Plant';
-        let plantLat = parseFloat(localStorage.getItem('plantLatSGXPersistentLoc')) || null;
-        let plantLon = parseFloat(localStorage.getItem('plantLonSGXPersistentLoc')) || null;
+        let plantName = localStorage.getItem('plantNameSGXCentered') || 'SGX Sensortech Plant';
+        let plantLat = parseFloat(localStorage.getItem('plantLatSGXCentered')) || null;
+        let plantLon = parseFloat(localStorage.getItem('plantLonSGXCentered')) || null;
         
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
@@ -575,7 +633,7 @@
 
         function captureManagerLocation() {
             if (currentRole !== 'manager' && currentRole !== 'hr') {
-                alert("Only Manager and HR can configure persistent plant location coordinates.");
+                alert("Only Manager and HR can configure permanent plant location coordinates.");
                 return;
             }
 
@@ -596,12 +654,12 @@
                     plantLon = position.coords.longitude;
                     plantName = locName;
 
-                    localStorage.setItem('plantNameSGXPersistentLoc', plantName);
-                    localStorage.setItem('plantLatSGXPersistentLoc', plantLat);
-                    localStorage.setItem('plantLonSGXPersistentLoc', plantLon);
+                    localStorage.setItem('plantNameSGXCentered', plantName);
+                    localStorage.setItem('plantLatSGXCentered', plantLat);
+                    localStorage.setItem('plantLonSGXCentered', plantLon);
 
                     updateManagerLocLabel();
-                    alert("Plant default location saved permanently! Employees can now mark attendance anytime without needing daily updates.");
+                    alert("Plant default location saved permanently!");
                 },
                 (error) => {
                     alert("GPS Error: Please enable location permission in your browser settings.");
@@ -617,13 +675,29 @@
             const dLon = (lon2 - lon1) * Math.PI / 180;
             const a = 
                 Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-                Math.sin(dLon/2) * Math.sin(dLon/2);
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
             return R * c;
         }
 
-        function markAttendance() {
+        function checkActiveClockInState() {
+            const clockInBtn = document.getElementById('clockInBtn');
+            const clockOutBtn = document.getElementById('clockOutBtn');
+            const userObj = customUsers[loggedInUserId];
+            const empIdLabel = userObj && userObj.empId ? ` [ID: ${userObj.empId}]` : (loggedInUserId === 'manager' ? ' [ID: MGR-01]' : '');
+            const displayLogId = loggedInUserId + empIdLabel;
+
+            const activeLog = attendanceLogs.find(l => l.userId === displayLogId && !l.clockOut);
+            if (activeLog) {
+                clockInBtn.classList.add('hidden');
+                clockOutBtn.classList.remove('hidden');
+            } else {
+                clockInBtn.classList.remove('hidden');
+                clockOutBtn.classList.add('hidden');
+            }
+        }
+
+        function markClockIn() {
             const msg = document.getElementById('attendanceMsg');
 
             if (plantLat === null || plantLon === null) {
@@ -632,7 +706,7 @@
                 return;
             }
 
-            msg.innerText = "Verifying your location against 500m geofence...";
+            msg.innerText = "Verifying your location against 500m geofence for Clock-In...";
             msg.className = "text-xs font-semibold text-sky-600 mt-2";
 
             if (!navigator.geolocation) {
@@ -648,7 +722,7 @@
                     const distanceMeters = calculateDistanceMeters(plantLat, plantLon, userLat, userLon);
 
                     if (distanceMeters <= 500) {
-                        const now = new Date().toLocaleString();
+                        const now = new Date();
                         const userObj = customUsers[loggedInUserId];
                         const empIdLabel = userObj && userObj.empId ? ` [ID: ${userObj.empId}]` : (loggedInUserId === 'manager' ? ' [ID: MGR-01]' : '');
                         const displayLogId = loggedInUserId + empIdLabel;
@@ -656,20 +730,24 @@
                         const newLog = {
                             id: Date.now(),
                             userId: displayLogId,
-                            time: now,
+                            clockInTimestamp: now.getTime(),
+                            clockIn: now.toLocaleString(),
+                            clockOut: null,
+                            hoursWorked: 0,
                             locationName: plantName,
                             distance: `${Math.round(distanceMeters)}m`,
-                            status: 'Present (Verified)'
+                            status: 'Clocked In (Active)'
                         };
 
                         attendanceLogs.unshift(newLog);
-                        localStorage.setItem('attendanceLogsSGXPersistentLoc', JSON.stringify(attendanceLogs));
+                        localStorage.setItem('attendanceLogsSGXCentered', JSON.stringify(attendanceLogs));
                         renderAttendanceTable();
+                        checkActiveClockInState();
 
-                        msg.innerText = `Attendance marked successfully! (${Math.round(distanceMeters)}m from plant).`;
+                        msg.innerText = `Clocked In successfully at ${now.toLocaleTimeString()}! (${Math.round(distanceMeters)}m from plant).`;
                         msg.className = "text-xs font-semibold text-emerald-600 mt-2";
                     } else {
-                        msg.innerText = `Attendance failed: You are ${Math.round(distanceMeters)}m away. Go nearby and try again.`;
+                        msg.innerText = `Clock-In failed: You are ${Math.round(distanceMeters)}m away. Go within 500m and try again.`;
                         msg.className = "text-xs font-semibold text-red-600 mt-2";
                     }
                 },
@@ -679,6 +757,34 @@
                 },
                 { enableHighAccuracy: true, timeout: 10000 }
             );
+        }
+
+        function markClockOut() {
+            const msg = document.getElementById('attendanceMsg');
+            const userObj = customUsers[loggedInUserId];
+            const empIdLabel = userObj && userObj.empId ? ` [ID: ${userObj.empId}]` : (loggedInUserId === 'manager' ? ' [ID: MGR-01]' : '');
+            const displayLogId = loggedInUserId + empIdLabel;
+
+            const activeLog = attendanceLogs.find(l => l.userId === displayLogId && !l.clockOut);
+            if (!activeLog) {
+                alert("No active clock-in found for your account.");
+                return;
+            }
+
+            const now = new Date();
+            const diffMs = now.getTime() - activeLog.clockInTimestamp;
+            const hoursVal = Math.max(0.1, (diffMs / (1000 * 60 * 60))).toFixed(2);
+
+            activeLog.clockOut = now.toLocaleString();
+            activeLog.hoursWorked = parseFloat(hoursVal);
+            activeLog.status = 'Completed Shift';
+
+            localStorage.setItem('attendanceLogsSGXCentered', JSON.stringify(attendanceLogs));
+            renderAttendanceTable();
+            checkActiveClockInState();
+
+            msg.innerText = `Clocked Out successfully! Total shift working hours: ${hoursVal} hrs.`;
+            msg.className = "text-xs font-semibold text-emerald-600 mt-2";
         }
 
         function renderAttendanceTable() {
@@ -701,10 +807,10 @@
             tbody.innerHTML = displayLogs.map(log => `
                 <tr class="hover:bg-gray-50 transition">
                     <td class="p-3 font-mono font-bold text-slate-900">${log.userId}</td>
-                    <td class="p-3 text-xs text-gray-600">${log.time}</td>
-                    <td class="p-3 text-xs text-sky-600 font-medium">${log.locationName}</td>
-                    <td class="p-3 text-xs font-mono text-slate-700">${log.distance}</td>
-                    <td class="p-3"><span class="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full">${log.status}</span></td>
+                    <td class="p-3 text-xs text-gray-600">${log.clockIn}</td>
+                    <td class="p-3 text-xs text-gray-600">${log.clockOut || '<span class="text-amber-600 font-bold animate-pulse">Shift Active...</span>'}</td>
+                    <td class="p-3 text-xs font-mono font-bold text-sky-600">${log.hoursWorked ? log.hoursWorked + ' hrs' : '-'}</td>
+                    <td class="p-3"><span class="text-xs font-semibold ${log.clockOut ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} px-2.5 py-1 rounded-full">${log.status}</span></td>
                 </tr>
             `).join('');
         }
@@ -712,8 +818,9 @@
         function clearAttendance() {
             if (confirm('Clear all attendance logs?')) {
                 attendanceLogs = [];
-                localStorage.removeItem('attendanceLogsSGXPersistentLoc');
+                localStorage.removeItem('attendanceLogsSGXCentered');
                 renderAttendanceTable();
+                checkActiveClockInState();
             }
         }
 
@@ -737,7 +844,7 @@
             };
 
             announcements.unshift(newAnnounce);
-            localStorage.setItem('announcementsSGXPersistentLoc', JSON.stringify(announcements));
+            localStorage.setItem('announcementsSGXCentered', JSON.stringify(announcements));
             renderAnnouncements();
             event.target.reset();
 
@@ -754,7 +861,7 @@
         function deleteAnnouncement(id) {
             if (currentRole !== 'manager' && currentRole !== 'hr') return;
             announcements = announcements.filter(a => a.id !== id);
-            localStorage.setItem('announcementsSGXPersistentLoc', JSON.stringify(announcements));
+            localStorage.setItem('announcementsSGXCentered', JSON.stringify(announcements));
             renderAnnouncements();
         }
 
@@ -798,7 +905,7 @@
             const superCountEl = document.getElementById('empSuperCount');
 
             let allUsersList = [];
-            allUsersList.push({ email: 'manager', name: 'Plant Manager', empId: 'MGR-01', role: 'manager', bio: localStorage.getItem('managerBioSGXPersistentLoc') || 'Plant Manager overseeing daily operations.' });
+            allUsersList.push({ email: 'manager', name: 'Plant Manager', empId: 'MGR-01', role: 'manager', bio: localStorage.getItem('managerBioSGXCentered') || 'Plant Manager overseeing daily operations.' });
             
             Object.keys(customUsers).forEach(email => {
                 let u = customUsers[email];
@@ -812,9 +919,9 @@
             tbody.innerHTML = allUsersList.map(u => {
                 let badgeColor = u.role === 'manager' ? 'bg-sky-100 text-sky-800' : u.role === 'hr' ? 'bg-indigo-100 text-indigo-800' : u.role === 'supervisor' ? 'bg-purple-100 text-purple-800' : 'bg-emerald-100 text-emerald-800';
                 return `
-                    <tr class="hover:bg-gray-50 transition">
+                    <tr class="hover:bg-gray-50 transition cursor-pointer" onclick="openEmployeeProfileAssessment('${u.email}', '${u.empId}')">
                         <td class="p-3">
-                            <div class="font-bold text-slate-900">${u.name}</div>
+                            <div class="font-bold text-sky-600 hover:underline">${u.name}</div>
                             <div class="text-xs text-gray-500 font-mono">${u.email}</div>
                         </td>
                         <td class="p-3 text-xs font-mono font-semibold text-slate-700">${u.empId}</td>
@@ -823,6 +930,101 @@
                     </tr>
                 `;
             }).join('');
+        }
+
+        function openEmployeeProfileAssessment(emailKey, empIdBadge) {
+            if (currentRole !== 'manager' && currentRole !== 'hr') {
+                alert("Unauthorized: Only Manager and HR can inspect employee profiles and working hours graphs.");
+                return;
+            }
+
+            const modal = document.getElementById('employeeProfileModal');
+            const nameEl = document.getElementById('profileModalName');
+            const emailEl = document.getElementById('profileModalEmail');
+            const daysCountEl = document.getElementById('profileModalDaysCount');
+            const hoursCountEl = document.getElementById('profileModalHoursCount');
+            const graphContainer = document.getElementById('profileModalGraphContainer');
+            const logsList = document.getElementById('profileModalLogsList');
+            const deleteBtn = document.getElementById('deleteEmployeeBtn');
+
+            let targetName = emailKey === 'manager' ? 'Plant Manager' : (customUsers[emailKey] ? customUsers[emailKey].name : emailKey);
+            nameEl.innerText = targetName;
+            emailEl.innerText = `Email ID: ${emailKey} | Badge: ${empIdBadge}`;
+
+            if (emailKey === 'manager') {
+                deleteBtn.classList.add('hidden');
+            } else {
+                deleteBtn.classList.remove('hidden');
+                deleteBtn.setAttribute('onclick', `terminateEmployee('${emailKey}')`);
+            }
+
+            const userLogs = attendanceLogs.filter(l => l.userId.toLowerCase().includes(emailKey.toLowerCase()) || l.userId.toLowerCase().includes(empIdBadge.toLowerCase()));
+            
+            const totalDaysPresent = userLogs.length;
+            const totalHours = userLogs.reduce((acc, curr) => acc + (curr.hoursWorked || 0), 0).toFixed(1);
+
+            daysCountEl.innerText = `${totalDaysPresent} Days`;
+            hoursCountEl.innerText = `${totalHours} Hrs`;
+
+            if (userLogs.length === 0) {
+                graphContainer.innerHTML = `<p class="text-xs text-gray-400 italic text-center py-4">No working hours recorded yet.</p>`;
+                logsList.innerHTML = `<p class="text-xs text-gray-400 italic">No punch logs found.</p>`;
+            } else {
+                graphContainer.innerHTML = userLogs.map(log => {
+                    let hrs = log.hoursWorked || 0;
+                    let barWidthPercent = Math.min(100, Math.max(10, (hrs / 12) * 100));
+                    return `
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-[11px] text-slate-600 font-mono">
+                                <span>${log.clockIn.split(',')[0]}</span>
+                                <span class="font-bold text-sky-600">${hrs} hrs</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                                <div class="bg-sky-600 h-3 rounded-full transition-all duration-500" style="width: ${barWidthPercent}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                logsList.innerHTML = userLogs.map(log => `
+                    <div class="bg-white p-2 rounded border flex justify-between items-center">
+                        <span class="font-mono text-gray-700">${log.clockIn} &rarr; ${log.clockOut || 'Active'}</span>
+                        <span class="font-bold text-sky-600">${log.hoursWorked ? log.hoursWorked + ' hrs' : 'Ongoing'}</span>
+                    </div>
+                `).join('');
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function terminateEmployee(emailKey) {
+            if (currentRole !== 'manager' && currentRole !== 'hr') {
+                alert("Unauthorized: Only Manager and HR can terminate/delete profiles.");
+                return;
+            }
+
+            if (confirm(`Are you sure you want to delete ${emailKey}'s profile? This will remove their account, login credentials, and task assignments permanently.`)) {
+                if (customUsers[emailKey]) {
+                    delete customUsers[emailKey];
+                    localStorage.setItem('customUsersSGXCentered', JSON.stringify(customUsers));
+                }
+
+                tasks = tasks.filter(t => t.employeeId.toLowerCase() !== emailKey.toLowerCase());
+                localStorage.setItem('assignedTasksSGXCentered', JSON.stringify(tasks));
+
+                closeEmployeeProfileModal();
+                renderEmployeesDirectory();
+                updateEmployeeDropdown();
+                updateMetrics();
+                renderManagerTasks();
+                renderEmployeeTasks();
+
+                alert(`Employee profile for ${emailKey} has been successfully deleted.`);
+            }
+        }
+
+        function closeEmployeeProfileModal() {
+            document.getElementById('employeeProfileModal').classList.add('hidden');
         }
 
         function handleLogin(event) {
@@ -874,7 +1076,7 @@
             if (customUsers[emailInput]) {
                 if (customUsers[emailInput].empId.toLowerCase() === empIdInput.toLowerCase()) {
                     customUsers[emailInput].pass = newPassInput;
-                    localStorage.setItem('customUsersSGXPersistentLoc', JSON.stringify(customUsers));
+                    localStorage.setItem('customUsersSGXCentered', JSON.stringify(customUsers));
 
                     msg.innerText = "Password successfully reset! You can now log in.";
                     msg.className = "text-xs font-semibold text-emerald-600 mt-2";
@@ -900,8 +1102,7 @@
             const createUserNav = document.getElementById('nav-createuser');
             const employeesListNav = document.getElementById('nav-employeeslist');
             const annexCreatorCard = document.getElementById('announcementCreatorCard');
-            const taskAssignCard = document.getElementById('taskAssignCard');
-            const taskTableContainer = document.getElementById('taskTableContainer');
+            const employeeHomeTasksCard = document.getElementById('employeeHomeTasksCard');
 
             if (currentRole === 'manager' || currentRole === 'hr') {
                 createUserNav.classList.remove('hidden');
@@ -909,22 +1110,28 @@
                 employeesListNav.classList.remove('hidden');
                 employeesListNav.classList.add('flex');
                 annexCreatorCard.classList.remove('hidden');
-                locConfigCard.style.display = "block"; // Both Manager and HR can manage location
+                locConfigCard.classList.remove('hidden');
             } else {
                 createUserNav.classList.add('hidden');
                 createUserNav.classList.remove('flex');
                 employeesListNav.classList.add('hidden');
                 employeesListNav.classList.remove('flex');
                 annexCreatorCard.classList.add('hidden');
-                locConfigCard.style.display = "none";
+                locConfigCard.classList.add('hidden');
+            }
+
+            if (currentRole === 'employee') {
+                employeeHomeTasksCard.classList.remove('hidden');
+            } else {
+                employeeHomeTasksCard.classList.add('hidden');
             }
 
             if (currentRole === 'manager' || currentRole === 'hr' || currentRole === 'supervisor') {
-                taskAssignCard.style.display = "block";
-                taskTableContainer.className = "bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2 flex flex-col";
+                document.getElementById('taskAssignCard').style.display = "block";
+                document.getElementById('taskTableContainer').className = "bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2 flex flex-col";
             } else {
-                taskAssignCard.style.display = "none";
-                taskTableContainer.className = "bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-3 flex flex-col";
+                document.getElementById('taskAssignCard').style.display = "none";
+                document.getElementById('taskTableContainer').className = "bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-3 flex flex-col";
             }
 
             if (currentRole === 'manager' || currentRole === 'it') {
@@ -948,6 +1155,7 @@
             renderManagerTasks();
             renderEmployeeTasks();
             renderAttendanceTable();
+            checkActiveClockInState();
             renderCalendar();
             renderAnnouncements();
             renderEmployeesDirectory();
@@ -996,7 +1204,7 @@
 
             if (loggedInUserId === 'manager') {
                 nameField.value = "Plant Manager";
-                let savedMgrBio = localStorage.getItem('managerBioSGXPersistentLoc') || "Plant Manager overseeing daily operations, shift production, and overall facility compliance.";
+                let savedMgrBio = localStorage.getItem('managerBioSGXCentered') || "Plant Manager overseeing daily operations, shift production, and overall facility compliance.";
                 bioField.value = savedMgrBio;
             } else if (customUsers[loggedInUserId]) {
                 nameField.value = customUsers[loggedInUserId].name;
@@ -1011,7 +1219,7 @@
             const canEditFields = (currentRole === 'manager' || currentRole === 'hr');
 
             if (loggedInUserId === 'manager') {
-                localStorage.setItem('managerBioSGXPersistentLoc', newBio);
+                localStorage.setItem('managerBioSGXCentered', newBio);
                 if (canEditFields) {
                     const newEmail = document.getElementById('profileEmailInput').value.trim().toLowerCase();
                     if (newEmail && newEmail !== loggedInUserId) {
@@ -1036,7 +1244,7 @@
                 } else {
                     customUsers[loggedInUserId].bio = newBio;
                 }
-                localStorage.setItem('customUsersSGXPersistentLoc', JSON.stringify(customUsers));
+                localStorage.setItem('customUsersSGXCentered', JSON.stringify(customUsers));
             }
 
             msg.innerText = "Profile updated successfully!";
@@ -1083,7 +1291,7 @@
             const successMsg = document.getElementById('createSuccess');
 
             customUsers[newId] = { name: nameInput, empId: empIdInput, pass: newPass, role: newRole, bio: `New ${newRole} account created.` };
-            localStorage.setItem('customUsersSGXPersistentLoc', JSON.stringify(customUsers));
+            localStorage.setItem('customUsersSGXCentered', JSON.stringify(customUsers));
 
             successMsg.classList.remove('hidden');
             setTimeout(() => successMsg.classList.add('hidden'), 4000);
@@ -1134,7 +1342,7 @@
                     return;
                 }
                 customUsers[loggedInUserId].pass = newPass;
-                localStorage.setItem('customUsersSGXPersistentLoc', JSON.stringify(customUsers));
+                localStorage.setItem('customUsersSGXCentered', JSON.stringify(customUsers));
 
                 msg.innerText = "Password updated successfully!";
                 msg.className = "text-xs font-semibold text-emerald-600 mt-2";
@@ -1164,7 +1372,7 @@
                 'home': 'Home Dashboard',
                 'employeeslist': 'Employees Directory & Assessment',
                 'manager': 'Task Management Board',
-                'attendance': 'GPS Attendance Logs',
+                'attendance': 'GPS Attendance & Punch-Out',
                 'createuser': 'Create ID & Pass',
                 'employee': 'Shift Tasks',
                 'calendar': 'Schedule Calendar',
@@ -1191,12 +1399,15 @@
 
             if(tabId === 'calendar') renderCalendar();
             if(tabId === 'employee') renderEmployeeTasks();
-            if(tabId === 'attendance') renderAttendanceTable();
+            if(tabId === 'attendance') {
+                renderAttendanceTable();
+                checkActiveClockInState();
+                updateManagerLocLabel();
+            }
             if(tabId === 'employeeslist') renderEmployeesDirectory();
             if(tabId === 'profile') loadProfileData();
             if(tabId === 'manager') {
                 updateEmployeeDropdown();
-                updateManagerLocLabel();
             }
         }
 
@@ -1228,7 +1439,7 @@
             };
 
             tasks.unshift(newTask);
-            localStorage.setItem('assignedTasksSGXPersistentLoc', JSON.stringify(tasks));
+            localStorage.setItem('assignedTasksSGXCentered', JSON.stringify(tasks));
             
             updateMetrics();
             renderManagerTasks();
@@ -1243,7 +1454,7 @@
 
         function updateStatus(id, newStatus) {
             tasks = tasks.map(t => t.id === id ? { ...t, status: newStatus } : t);
-            localStorage.setItem('assignedTasksSGXPersistentLoc', JSON.stringify(tasks));
+            localStorage.setItem('assignedTasksSGXCentered', JSON.stringify(tasks));
             updateMetrics();
             renderManagerTasks();
             renderEmployeeTasks();
@@ -1256,7 +1467,7 @@
                 return;
             }
             tasks = tasks.filter(t => t.id !== id);
-            localStorage.setItem('assignedTasksSGXPersistentLoc', JSON.stringify(tasks));
+            localStorage.setItem('assignedTasksSGXCentered', JSON.stringify(tasks));
             updateMetrics();
             renderManagerTasks();
             renderEmployeeTasks();
@@ -1319,7 +1530,9 @@
 
         function renderEmployeeTasks() {
             const tbody = document.getElementById('employeeTableBody');
+            const homeTbody = document.getElementById('homeEmployeeTableBody');
             const subtitle = document.getElementById('employeeSubtitle');
+            const homeTaskCount = document.getElementById('homeTaskCountBadge');
 
             let filteredTasks = tasks;
             if (currentRole === 'employee' || currentRole === 'supervisor') {
@@ -1329,12 +1542,16 @@
                 subtitle.innerText = "Review and update active team task statuses.";
             }
 
+            homeTaskCount.innerText = `${filteredTasks.length} Tasks`;
+
             if (filteredTasks.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-400 italic">No tasks currently assigned to you.</td></tr>`;
+                const emptyHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-400 italic">No tasks currently assigned to you.</td></tr>`;
+                tbody.innerHTML = emptyHTML;
+                homeTbody.innerHTML = emptyHTML;
                 return;
             }
 
-            tbody.innerHTML = filteredTasks.map(task => {
+            const tasksHTML = filteredTasks.map(task => {
                 let statusBadge = task.status === 'Pending' ? 'bg-amber-100 text-amber-800' : task.status === 'In Progress' ? 'bg-sky-100 text-sky-800' : 'bg-emerald-100 text-emerald-800';
 
                 return `
@@ -1358,6 +1575,9 @@
                     </tr>
                 `;
             }).join('');
+
+            tbody.innerHTML = tasksHTML;
+            homeTbody.innerHTML = tasksHTML;
         }
 
         function changeMonth(direction) {
@@ -1425,7 +1645,7 @@
                     let statusBadge = t.status === 'Pending' ? 'bg-amber-100 text-amber-800' : t.status === 'In Progress' ? 'bg-sky-100 text-sky-800' : 'bg-emerald-100 text-emerald-800';
                     return `
                         <div class="border rounded-lg p-3 bg-gray-50 space-y-1">
-                            <div class="flex justify-between items-start">
+                            <div class="flex justify-between items-center">
                                 <span class="font-bold text-slate-900 text-sm">${t.title}</span>
                                 <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full ${statusBadge}">${t.status}</span>
                             </div>
@@ -1450,7 +1670,7 @@
             }
             if (confirm('Clear all tasks?')) {
                 tasks = [];
-                localStorage.removeItem('assignedTasksSGXPersistentLoc');
+                localStorage.removeItem('assignedTasksSGXCentered');
                 updateMetrics();
                 renderManagerTasks();
                 renderEmployeeTasks();
