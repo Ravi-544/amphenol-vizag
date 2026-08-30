@@ -587,26 +587,33 @@
     <script>
         document.getElementById('taskDate').valueAsDate = new Date();
 
-        let customUsers = JSON.parse(localStorage.getItem('customUsersSGXCentered')) || {
-            "hr@sgxsensortech.com": { name: "HR Department", empId: "SGX-HR-01", pass: "Hr@123", role: "hr", bio: "HR Department handling recruitment, records, and staff credential management." },
-            "it@sgxsensortech.com": { name: "IT Administrator", empId: "SGX-IT-01", pass: "It@123", role: "it", bio: "IT Administrator managing portals, networks, and technical infrastructure." }
+        // SINGLE PERMANENT STORAGE KEY FOR ALL DATA TO PREVENT DATA LOSS ON UPDATES
+        let appData = JSON.parse(localStorage.getItem('SGX_Sensortech_Master_Data')) || {
+            customUsers: {
+                "hr@sgxsensortech.com": { name: "HR Department", empId: "SGX-HR-01", pass: "Hr@123", role: "hr", bio: "HR Department handling recruitment, records, and staff credential management." },
+                "it@sgxsensortech.com": { name: "IT Administrator", empId: "SGX-IT-01", pass: "It@123", role: "it", bio: "IT Administrator managing portals, networks, and technical infrastructure." }
+            },
+            tasks: [],
+            attendanceLogs: [],
+            announcements: [
+                { id: 1, title: "Welcome to SGX Sensortech Portal", content: "All employees are instructed to mark their attendance and clock out upon shift completion.", date: new Date().toLocaleDateString(), author: "Plant Management" }
+            ],
+            plantName: 'SGX Sensortech Plant',
+            plantLat: null,
+            plantLon: null,
+            managerBio: 'Plant Manager overseeing daily operations, shift production, and overall facility compliance.'
         };
-        let tasks = JSON.parse(localStorage.getItem('assignedTasksSGXCentered')) || [];
-        let attendanceLogs = JSON.parse(localStorage.getItem('attendanceLogsSGXCentered')) || [];
-        let announcements = JSON.parse(localStorage.getItem('announcementsSGXCentered')) || [
-            { id: 1, title: "Welcome to SGX Sensortech Portal", content: "All employees are instructed to mark their attendance and clock out upon shift completion.", date: new Date().toLocaleDateString(), author: "Plant Management" }
-        ];
-        
-        let plantName = localStorage.getItem('plantNameSGXCentered') || 'SGX Sensortech Plant';
-        let plantLat = parseFloat(localStorage.getItem('plantLatSGXCentered')) || null;
-        let plantLon = parseFloat(localStorage.getItem('plantLonSGXCentered')) || null;
+
+        function saveData() {
+            localStorage.setItem('SGX_Sensortech_Master_Data', JSON.stringify(appData));
+        }
         
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
         let currentRole = 'manager';
         let loggedInUserId = '';
 
-        document.getElementById('defaultLocationInput').value = plantName;
+        document.getElementById('defaultLocationInput').value = appData.plantName;
         updateManagerLocLabel();
         renderAnnouncements();
 
@@ -622,12 +629,12 @@
         function updateManagerLocLabel() {
             const statusEl = document.getElementById('managerLocStatus');
             const displayEl = document.getElementById('displayDefaultLocation');
-            if(plantLat !== null && plantLon !== null) {
-                statusEl.innerText = `Saved Permanent Anchor Coordinates: ${plantLat.toFixed(5)}, ${plantLon.toFixed(5)}`;
-                displayEl.innerText = `${plantName} (${plantLat.toFixed(4)}, ${plantLon.toFixed(4)})`;
+            if(appData.plantLat !== null && appData.plantLon !== null) {
+                statusEl.innerText = `Saved Permanent Anchor Coordinates: ${appData.plantLat.toFixed(5)}, ${appData.plantLon.toFixed(5)}`;
+                displayEl.innerText = `${appData.plantName} (${appData.plantLat.toFixed(4)}, ${appData.plantLon.toFixed(4)})`;
             } else {
                 statusEl.innerText = "Saved Permanent Anchor Coordinates: Not set yet. Click button to capture GPS.";
-                displayEl.innerText = `${plantName} (Coordinates Not Set)`;
+                displayEl.innerText = `${appData.plantName} (Coordinates Not Set)`;
             }
         }
 
@@ -650,13 +657,10 @@
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    plantLat = position.coords.latitude;
-                    plantLon = position.coords.longitude;
-                    plantName = locName;
-
-                    localStorage.setItem('plantNameSGXCentered', plantName);
-                    localStorage.setItem('plantLatSGXCentered', plantLat);
-                    localStorage.setItem('plantLonSGXCentered', plantLon);
+                    appData.plantLat = position.coords.latitude;
+                    appData.plantLon = position.coords.longitude;
+                    appData.plantName = locName;
+                    saveData();
 
                     updateManagerLocLabel();
                     alert("Plant default location saved permanently!");
@@ -683,11 +687,11 @@
         function checkActiveClockInState() {
             const clockInBtn = document.getElementById('clockInBtn');
             const clockOutBtn = document.getElementById('clockOutBtn');
-            const userObj = customUsers[loggedInUserId];
+            const userObj = appData.customUsers[loggedInUserId];
             const empIdLabel = userObj && userObj.empId ? ` [ID: ${userObj.empId}]` : (loggedInUserId === 'manager' ? ' [ID: MGR-01]' : '');
             const displayLogId = loggedInUserId + empIdLabel;
 
-            const activeLog = attendanceLogs.find(l => l.userId === displayLogId && !l.clockOut);
+            const activeLog = appData.attendanceLogs.find(l => l.userId === displayLogId && !l.clockOut);
             if (activeLog) {
                 clockInBtn.classList.add('hidden');
                 clockOutBtn.classList.remove('hidden');
@@ -700,7 +704,7 @@
         function markClockIn() {
             const msg = document.getElementById('attendanceMsg');
 
-            if (plantLat === null || plantLon === null) {
+            if (appData.plantLat === null || appData.plantLon === null) {
                 msg.innerText = "Error: Plant location coordinates have not been configured by Manager/HR yet.";
                 msg.className = "text-xs font-semibold text-red-600 mt-2";
                 return;
@@ -719,11 +723,11 @@
                 (position) => {
                     const userLat = position.coords.latitude;
                     const userLon = position.coords.longitude;
-                    const distanceMeters = calculateDistanceMeters(plantLat, plantLon, userLat, userLon);
+                    const distanceMeters = calculateDistanceMeters(appData.plantLat, appData.plantLon, userLat, userLon);
 
                     if (distanceMeters <= 500) {
                         const now = new Date();
-                        const userObj = customUsers[loggedInUserId];
+                        const userObj = appData.customUsers[loggedInUserId];
                         const empIdLabel = userObj && userObj.empId ? ` [ID: ${userObj.empId}]` : (loggedInUserId === 'manager' ? ' [ID: MGR-01]' : '');
                         const displayLogId = loggedInUserId + empIdLabel;
 
@@ -734,13 +738,13 @@
                             clockIn: now.toLocaleString(),
                             clockOut: null,
                             hoursWorked: 0,
-                            locationName: plantName,
+                            locationName: appData.plantName,
                             distance: `${Math.round(distanceMeters)}m`,
                             status: 'Clocked In (Active)'
                         };
 
-                        attendanceLogs.unshift(newLog);
-                        localStorage.setItem('attendanceLogsSGXCentered', JSON.stringify(attendanceLogs));
+                        appData.attendanceLogs.unshift(newLog);
+                        saveData();
                         renderAttendanceTable();
                         checkActiveClockInState();
 
@@ -761,11 +765,11 @@
 
         function markClockOut() {
             const msg = document.getElementById('attendanceMsg');
-            const userObj = customUsers[loggedInUserId];
+            const userObj = appData.customUsers[loggedInUserId];
             const empIdLabel = userObj && userObj.empId ? ` [ID: ${userObj.empId}]` : (loggedInUserId === 'manager' ? ' [ID: MGR-01]' : '');
             const displayLogId = loggedInUserId + empIdLabel;
 
-            const activeLog = attendanceLogs.find(l => l.userId === displayLogId && !l.clockOut);
+            const activeLog = appData.attendanceLogs.find(l => l.userId === displayLogId && !l.clockOut);
             if (!activeLog) {
                 alert("No active clock-in found for your account.");
                 return;
@@ -779,7 +783,7 @@
             activeLog.hoursWorked = parseFloat(hoursVal);
             activeLog.status = 'Completed Shift';
 
-            localStorage.setItem('attendanceLogsSGXCentered', JSON.stringify(attendanceLogs));
+            saveData();
             renderAttendanceTable();
             checkActiveClockInState();
 
@@ -789,14 +793,14 @@
 
         function renderAttendanceTable() {
             const tbody = document.getElementById('attendanceTableBody');
-            if (attendanceLogs.length === 0) {
+            if (appData.attendanceLogs.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400 italic">No attendance records found.</td></tr>`;
                 return;
             }
 
-            let displayLogs = attendanceLogs;
+            let displayLogs = appData.attendanceLogs;
             if (currentRole === 'employee' || currentRole === 'supervisor') {
-                displayLogs = attendanceLogs.filter(l => l.userId.toLowerCase().includes(loggedInUserId.toLowerCase()));
+                displayLogs = appData.attendanceLogs.filter(l => l.userId.toLowerCase().includes(loggedInUserId.toLowerCase()));
             }
 
             if(displayLogs.length === 0) {
@@ -817,8 +821,8 @@
 
         function clearAttendance() {
             if (confirm('Clear all attendance logs?')) {
-                attendanceLogs = [];
-                localStorage.removeItem('attendanceLogsSGXCentered');
+                appData.attendanceLogs = [];
+                saveData();
                 renderAttendanceTable();
                 checkActiveClockInState();
             }
@@ -833,7 +837,7 @@
 
             const title = document.getElementById('announcementTitle').value.trim();
             const content = document.getElementById('announcementContent').value.trim();
-            const authorName = loggedInUserId === 'manager' ? 'Plant Manager' : (customUsers[loggedInUserId] ? customUsers[loggedInUserId].name : 'HR Department');
+            const authorName = loggedInUserId === 'manager' ? 'Plant Manager' : (appData.customUsers[loggedInUserId] ? appData.customUsers[loggedInUserId].name : 'HR Department');
 
             const newAnnounce = {
                 id: Date.now(),
@@ -843,8 +847,8 @@
                 author: authorName
             };
 
-            announcements.unshift(newAnnounce);
-            localStorage.setItem('announcementsSGXCentered', JSON.stringify(announcements));
+            appData.announcements.unshift(newAnnounce);
+            saveData();
             renderAnnouncements();
             event.target.reset();
 
@@ -860,24 +864,24 @@
 
         function deleteAnnouncement(id) {
             if (currentRole !== 'manager' && currentRole !== 'hr') return;
-            announcements = announcements.filter(a => a.id !== id);
-            localStorage.setItem('announcementsSGXCentered', JSON.stringify(announcements));
+            appData.announcements = appData.announcements.filter(a => a.id !== id);
+            saveData();
             renderAnnouncements();
         }
 
         function renderAnnouncements() {
             const listContainer = document.getElementById('announcementsList');
             const countBadge = document.getElementById('announcementCount');
-            countBadge.innerText = `${announcements.length} Active`;
+            countBadge.innerText = `${appData.announcements.length} Active`;
 
-            if (announcements.length === 0) {
+            if (appData.announcements.length === 0) {
                 listContainer.innerHTML = `<p class="text-sm text-gray-400 italic">No announcements posted yet.</p>`;
                 return;
             }
 
             const canManage = (currentRole === 'manager' || currentRole === 'hr');
 
-            listContainer.innerHTML = announcements.map(a => `
+            listContainer.innerHTML = appData.announcements.map(a => `
                 <div class="border rounded-lg p-4 bg-gray-50 space-y-2 relative">
                     <div class="flex justify-between items-start">
                         <h4 class="font-bold text-slate-900 text-sm sm:text-base">${a.title}</h4>
@@ -905,10 +909,10 @@
             const superCountEl = document.getElementById('empSuperCount');
 
             let allUsersList = [];
-            allUsersList.push({ email: 'manager', name: 'Plant Manager', empId: 'MGR-01', role: 'manager', bio: localStorage.getItem('managerBioSGXCentered') || 'Plant Manager overseeing daily operations.' });
+            allUsersList.push({ email: 'manager', name: 'Plant Manager', empId: 'MGR-01', role: 'manager', bio: appData.managerBio });
             
-            Object.keys(customUsers).forEach(email => {
-                let u = customUsers[email];
+            Object.keys(appData.customUsers).forEach(email => {
+                let u = appData.customUsers[email];
                 allUsersList.push({ email: email, name: u.name, empId: u.empId || 'N/A', role: u.role, bio: u.bio || 'No bio provided.' });
             });
 
@@ -947,7 +951,7 @@
             const logsList = document.getElementById('profileModalLogsList');
             const deleteBtn = document.getElementById('deleteEmployeeBtn');
 
-            let targetName = emailKey === 'manager' ? 'Plant Manager' : (customUsers[emailKey] ? customUsers[emailKey].name : emailKey);
+            let targetName = emailKey === 'manager' ? 'Plant Manager' : (appData.customUsers[emailKey] ? appData.customUsers[emailKey].name : emailKey);
             nameEl.innerText = targetName;
             emailEl.innerText = `Email ID: ${emailKey} | Badge: ${empIdBadge}`;
 
@@ -958,7 +962,7 @@
                 deleteBtn.setAttribute('onclick', `terminateEmployee('${emailKey}')`);
             }
 
-            const userLogs = attendanceLogs.filter(l => l.userId.toLowerCase().includes(emailKey.toLowerCase()) || l.userId.toLowerCase().includes(empIdBadge.toLowerCase()));
+            const userLogs = appData.attendanceLogs.filter(l => l.userId.toLowerCase().includes(emailKey.toLowerCase()) || l.userId.toLowerCase().includes(empIdBadge.toLowerCase()));
             
             const totalDaysPresent = userLogs.length;
             const totalHours = userLogs.reduce((acc, curr) => acc + (curr.hoursWorked || 0), 0).toFixed(1);
@@ -1004,13 +1008,12 @@
             }
 
             if (confirm(`Are you sure you want to delete ${emailKey}'s profile? This will remove their account, login credentials, and task assignments permanently.`)) {
-                if (customUsers[emailKey]) {
-                    delete customUsers[emailKey];
-                    localStorage.setItem('customUsersSGXCentered', JSON.stringify(customUsers));
+                if (appData.customUsers[emailKey]) {
+                    delete appData.customUsers[emailKey];
                 }
 
-                tasks = tasks.filter(t => t.employeeId.toLowerCase() !== emailKey.toLowerCase());
-                localStorage.setItem('assignedTasksSGXCentered', JSON.stringify(tasks));
+                appData.tasks = appData.tasks.filter(t => t.employeeId.toLowerCase() !== emailKey.toLowerCase());
+                saveData();
 
                 closeEmployeeProfileModal();
                 renderEmployeesDirectory();
@@ -1037,8 +1040,8 @@
                 currentRole = 'manager';
                 loggedInUserId = idInput;
                 grantAccess();
-            } else if (customUsers[idInput] && customUsers[idInput].pass === passInput) {
-                currentRole = customUsers[idInput].role;
+            } else if (appData.customUsers[idInput] && appData.customUsers[idInput].pass === passInput) {
+                currentRole = appData.customUsers[idInput].role;
                 loggedInUserId = idInput;
                 grantAccess();
             } else {
@@ -1073,10 +1076,10 @@
                 return;
             }
 
-            if (customUsers[emailInput]) {
-                if (customUsers[emailInput].empId.toLowerCase() === empIdInput.toLowerCase()) {
-                    customUsers[emailInput].pass = newPassInput;
-                    localStorage.setItem('customUsersSGXCentered', JSON.stringify(customUsers));
+            if (appData.customUsers[emailInput]) {
+                if (appData.customUsers[emailInput].empId.toLowerCase() === empIdInput.toLowerCase()) {
+                    appData.customUsers[emailInput].pass = newPassInput;
+                    saveData();
 
                     msg.innerText = "Password successfully reset! You can now log in.";
                     msg.className = "text-xs font-semibold text-emerald-600 mt-2";
@@ -1144,7 +1147,7 @@
                 roleBadge.innerText = "Role: Supervisor";
                 roleBadge.className = "text-[11px] sm:text-xs bg-purple-50 text-purple-700 font-semibold px-2.5 py-1 rounded-md";
             } else {
-                let nameLabel = customUsers[loggedInUserId] ? customUsers[loggedInUserId].name : loggedInUserId;
+                let nameLabel = appData.customUsers[loggedInUserId] ? appData.customUsers[loggedInUserId].name : loggedInUserId;
                 roleBadge.innerText = `Role: Employee (${nameLabel})`;
                 roleBadge.className = "text-[11px] sm:text-xs bg-emerald-50 text-emerald-700 font-semibold px-2.5 py-1 rounded-md";
             }
@@ -1204,11 +1207,10 @@
 
             if (loggedInUserId === 'manager') {
                 nameField.value = "Plant Manager";
-                let savedMgrBio = localStorage.getItem('managerBioSGXCentered') || "Plant Manager overseeing daily operations, shift production, and overall facility compliance.";
-                bioField.value = savedMgrBio;
-            } else if (customUsers[loggedInUserId]) {
-                nameField.value = customUsers[loggedInUserId].name;
-                bioField.value = customUsers[loggedInUserId].bio || "";
+                bioField.value = appData.managerBio;
+            } else if (appData.customUsers[loggedInUserId]) {
+                nameField.value = appData.customUsers[loggedInUserId].name;
+                bioField.value = appData.customUsers[loggedInUserId].bio || "";
             }
         }
 
@@ -1219,33 +1221,33 @@
             const canEditFields = (currentRole === 'manager' || currentRole === 'hr');
 
             if (loggedInUserId === 'manager') {
-                localStorage.setItem('managerBioSGXCentered', newBio);
+                appData.managerBio = newBio;
                 if (canEditFields) {
                     const newEmail = document.getElementById('profileEmailInput').value.trim().toLowerCase();
                     if (newEmail && newEmail !== loggedInUserId) {
                         loggedInUserId = newEmail;
                     }
                 }
-            } else if (customUsers[loggedInUserId]) {
+            } else if (appData.customUsers[loggedInUserId]) {
                 if (canEditFields) {
                     const newName = document.getElementById('profileNameInput').value.trim();
                     const newEmail = document.getElementById('profileEmailInput').value.trim().toLowerCase();
                     const newAssignedRole = document.getElementById('profileRoleSelect').value;
 
                     if (newEmail && newEmail !== loggedInUserId) {
-                        customUsers[newEmail] = { ...customUsers[loggedInUserId], name: newName, role: newAssignedRole, bio: newBio };
-                        delete customUsers[loggedInUserId];
+                        appData.customUsers[newEmail] = { ...appData.customUsers[loggedInUserId], name: newName, role: newAssignedRole, bio: newBio };
+                        delete appData.customUsers[loggedInUserId];
                         loggedInUserId = newEmail;
                     } else {
-                        customUsers[loggedInUserId].name = newName;
-                        customUsers[loggedInUserId].role = newAssignedRole;
-                        customUsers[loggedInUserId].bio = newBio;
+                        appData.customUsers[loggedInUserId].name = newName;
+                        appData.customUsers[loggedInUserId].role = newAssignedRole;
+                        appData.customUsers[loggedInUserId].bio = newBio;
                     }
                 } else {
-                    customUsers[loggedInUserId].bio = newBio;
+                    appData.customUsers[loggedInUserId].bio = newBio;
                 }
-                localStorage.setItem('customUsersSGXCentered', JSON.stringify(customUsers));
             }
+            saveData();
 
             msg.innerText = "Profile updated successfully!";
             msg.className = "text-xs font-semibold text-emerald-600 mt-2";
@@ -1260,7 +1262,7 @@
 
         function updateEmployeeDropdown() {
             const select = document.getElementById('employeeIdSelect');
-            const employeeIds = Object.keys(customUsers).filter(id => ['employee', 'supervisor'].includes(customUsers[id].role));
+            const employeeIds = Object.keys(appData.customUsers).filter(id => ['employee', 'supervisor'].includes(appData.customUsers[id].role));
             
             select.innerHTML = '';
             if (employeeIds.length === 0) {
@@ -1270,7 +1272,7 @@
 
             select.innerHTML = '<option value="" disabled selected>Select registered employee...</option>';
             employeeIds.forEach(id => {
-                let user = customUsers[id];
+                let user = appData.customUsers[id];
                 let empIdTag = user.empId ? ` [ID: ${user.empId}]` : '';
                 select.innerHTML += `<option value="${id}">${user.name}${empIdTag} (${id})</option>`;
             });
@@ -1290,8 +1292,8 @@
             const newRole = document.getElementById('newUserRole').value;
             const successMsg = document.getElementById('createSuccess');
 
-            customUsers[newId] = { name: nameInput, empId: empIdInput, pass: newPass, role: newRole, bio: `New ${newRole} account created.` };
-            localStorage.setItem('customUsersSGXCentered', JSON.stringify(customUsers));
+            appData.customUsers[newId] = { name: nameInput, empId: empIdInput, pass: newPass, role: newRole, bio: `New ${newRole} account created.` };
+            saveData();
 
             successMsg.classList.remove('hidden');
             setTimeout(() => successMsg.classList.add('hidden'), 4000);
@@ -1334,15 +1336,15 @@
                 return;
             }
 
-            if (customUsers[loggedInUserId]) {
-                if (customUsers[loggedInUserId].pass !== currentPass) {
+            if (appData.customUsers[loggedInUserId]) {
+                if (appData.customUsers[loggedInUserId].pass !== currentPass) {
                     msg.innerText = "Incorrect current password.";
                     msg.className = "text-xs font-semibold text-red-600 mt-2";
                     msg.classList.remove('hidden');
                     return;
                 }
-                customUsers[loggedInUserId].pass = newPass;
-                localStorage.setItem('customUsersSGXCentered', JSON.stringify(customUsers));
+                appData.customUsers[loggedInUserId].pass = newPass;
+                saveData();
 
                 msg.innerText = "Password updated successfully!";
                 msg.className = "text-xs font-semibold text-emerald-600 mt-2";
@@ -1422,7 +1424,7 @@
             const empId = document.getElementById('employeeIdSelect').value;
             if (!empId) { alert("Please select an employee before assigning a task."); return; }
 
-            const empObj = customUsers[empId];
+            const empObj = appData.customUsers[empId];
             const empIdTag = empObj && empObj.empId ? ` [ID: ${empObj.empId}]` : '';
             const empDisplayName = empObj ? `${empObj.name}${empIdTag} (${empId})` : empId;
 
@@ -1438,8 +1440,8 @@
                 status: 'Pending'
             };
 
-            tasks.unshift(newTask);
-            localStorage.setItem('assignedTasksSGXCentered', JSON.stringify(tasks));
+            appData.tasks.unshift(newTask);
+            saveData();
             
             updateMetrics();
             renderManagerTasks();
@@ -1453,8 +1455,8 @@
         }
 
         function updateStatus(id, newStatus) {
-            tasks = tasks.map(t => t.id === id ? { ...t, status: newStatus } : t);
-            localStorage.setItem('assignedTasksSGXCentered', JSON.stringify(tasks));
+            appData.tasks = appData.tasks.map(t => t.id === id ? { ...t, status: newStatus } : t);
+            saveData();
             updateMetrics();
             renderManagerTasks();
             renderEmployeeTasks();
@@ -1466,8 +1468,8 @@
                 alert("Unauthorized action.");
                 return;
             }
-            tasks = tasks.filter(t => t.id !== id);
-            localStorage.setItem('assignedTasksSGXCentered', JSON.stringify(tasks));
+            appData.tasks = appData.tasks.filter(t => t.id !== id);
+            saveData();
             updateMetrics();
             renderManagerTasks();
             renderEmployeeTasks();
@@ -1475,10 +1477,10 @@
         }
 
         function updateMetrics() {
-            const total = tasks.length;
-            const pending = tasks.filter(t => t.status === 'Pending').length;
-            const progress = tasks.filter(t => t.status === 'In Progress').length;
-            const completed = tasks.filter(t => t.status === 'Completed').length;
+            const total = appData.tasks.length;
+            const pending = appData.tasks.filter(t => t.status === 'Pending').length;
+            const progress = appData.tasks.filter(t => t.status === 'In Progress').length;
+            const completed = appData.tasks.filter(t => t.status === 'Completed').length;
 
             document.getElementById('statTotal').innerText = total;
             document.getElementById('statPending').innerText = pending;
@@ -1488,14 +1490,14 @@
 
         function renderManagerTasks() {
             const tbody = document.getElementById('managerTableBody');
-            if (tasks.length === 0) {
+            if (appData.tasks.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-400 italic">No tasks assigned yet.</td></tr>`;
                 return;
             }
 
             const canDelete = (currentRole !== 'employee');
 
-            tbody.innerHTML = tasks.map(task => {
+            tbody.innerHTML = appData.tasks.map(task => {
                 let statusBadge = task.status === 'Pending' ? 'bg-amber-100 text-amber-800' : task.status === 'In Progress' ? 'bg-sky-100 text-sky-800' : 'bg-emerald-100 text-emerald-800';
                 let priorityBadge = task.priority === 'High' ? 'bg-red-50 text-red-600 border border-red-200' : task.priority === 'Medium' ? 'bg-orange-50 text-orange-600 border border-orange-200' : 'bg-slate-50 text-slate-600 border border-slate-200';
 
@@ -1534,10 +1536,10 @@
             const subtitle = document.getElementById('employeeSubtitle');
             const homeTaskCount = document.getElementById('homeTaskCountBadge');
 
-            let filteredTasks = tasks;
+            let filteredTasks = appData.tasks;
             if (currentRole === 'employee' || currentRole === 'supervisor') {
                 subtitle.innerText = `Showing tasks assigned to: ${loggedInUserId}`;
-                filteredTasks = tasks.filter(t => t.employeeId.toLowerCase() === loggedInUserId.toLowerCase());
+                filteredTasks = appData.tasks.filter(t => t.employeeId.toLowerCase() === loggedInUserId.toLowerCase());
             } else {
                 subtitle.innerText = "Review and update active team task statuses.";
             }
@@ -1605,7 +1607,7 @@
 
             for (let day = 1; day <= totalDays; day++) {
                 const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                let dayTasks = tasks.filter(t => t.date === dateString);
+                let dayTasks = appData.tasks.filter(t => t.date === dateString);
                 
                 if (currentRole === 'employee' || currentRole === 'supervisor') {
                     dayTasks = dayTasks.filter(t => t.employeeId.toLowerCase() === loggedInUserId.toLowerCase());
@@ -1632,7 +1634,7 @@
             const modalList = document.getElementById('modalTaskList');
 
             modalTitle.innerText = `Tasks for ${dateStr}`;
-            let dayTasks = tasks.filter(t => t.date === dateStr);
+            let dayTasks = appData.tasks.filter(t => t.date === dateStr);
 
             if (currentRole === 'employee' || currentRole === 'supervisor') {
                 dayTasks = dayTasks.filter(t => t.employeeId.toLowerCase() === loggedInUserId.toLowerCase());
@@ -1669,8 +1671,8 @@
                 return;
             }
             if (confirm('Clear all tasks?')) {
-                tasks = [];
-                localStorage.removeItem('assignedTasksSGXCentered');
+                appData.tasks = [];
+                saveData();
                 updateMetrics();
                 renderManagerTasks();
                 renderEmployeeTasks();
